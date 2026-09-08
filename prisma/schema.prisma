@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +5,511 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum PublicationType {
+  JOURNAL
+  CONFERENCE
+  BOOK
+  BOOK_CHAPTER
+  THESIS
+  PREPRINT
+  OTHER
+}
+
+enum ProjectStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+  ON_HOLD
+  ARCHIVED
+}
+
+enum ProjectMemberRole {
+  PRINCIPAL_INVESTIGATOR
+  CO_INVESTIGATOR
+  RESEARCHER
+  RESEARCH_ASSISTANT
+  CONTRIBUTOR
+}
+
+enum LandingPageSectionType {
+  HERO
+  ABOUT
+  RESEARCH_AREAS
+  FEATURED_PROJECTS
+  PUBLICATIONS
+  PEOPLE
+  DATASETS
+  NEWS
+  CONTACT
+  CUSTOM
+}
+
+// ============================================================
+// AUTHENTICATION
+// ============================================================
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(EDITOR)
+  isActive     Boolean  @default(true)
+
+  landingPagePermissions LandingPagePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+  @@index([isActive])
+}
+
+// ============================================================
+// PEOPLE
+// ============================================================
+
+model Person {
+  id               String  @id @default(cuid())
+  name             String
+  slug             String  @unique
+  designation      String?
+  department       String?
+  email            String?
+  bio              String?
+  profileImage     String?
+  website          String?
+  googleScholarUrl String?
+  orcidUrl         String?
+  linkedinUrl      String?
+  githubUrl        String?
+  isActive         Boolean @default(true)
+  displayOrder     Int     @default(0)
+
+  researcherProfile ResearcherProfile?
+
+  awards Award[]
+
+  publicationAuthors PublicationAuthor[]
+
+  projectMemberships ProjectMember[]
+
+  principalInvestigatorProjects Project[]
+
+  researchAreas PersonResearchArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([displayOrder])
+  @@index([designation])
+}
+
+// ============================================================
+// RESEARCHER PROFILE
+// ============================================================
+
+model ResearcherProfile {
+  id       String @id @default(cuid())
+  personId String @unique
+
+  researchStatement String?
+  education         String?
+  experience        String?
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// RESEARCH AREAS
+// ============================================================
+
+model ResearchArea {
+  id           String  @id @default(cuid())
+  name         String
+  slug         String  @unique
+  description  String?
+  icon         String?
+  isActive     Boolean @default(true)
+  displayOrder Int     @default(0)
+
+  people       PersonResearchArea[]
+  publications PublicationResearchArea[]
+  projects     ProjectResearchArea[]
+  datasets     DatasetResearchArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([displayOrder])
+}
+
+// ============================================================
+// PERSON ↔ RESEARCH AREA
+// ============================================================
+
+model PersonResearchArea {
+  personId       String
+  researchAreaId String
+
+  person       Person       @relation(fields: [personId], references: [id], onDelete: Cascade)
+  researchArea ResearchArea @relation(fields: [researchAreaId], references: [id], onDelete: Cascade)
+
+  @@id([personId, researchAreaId])
+  @@index([researchAreaId])
+}
+
+// ============================================================
+// PUBLICATIONS
+// ============================================================
+
+model Publication {
+  id              String          @id @default(cuid())
+  title           String
+  slug            String          @unique
+  abstract        String?
+  publicationType PublicationType @default(OTHER)
+
+  journal    String?
+  conference String?
+  publisher  String?
+
+  publicationDate DateTime?
+
+  doi    String?
+  url    String?
+  pdfUrl String?
+
+  citationCount Int     @default(0)
+  isFeatured    Boolean @default(false)
+
+  authors       PublicationAuthor[]
+  researchAreas PublicationResearchArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([publicationType])
+  @@index([publicationDate])
+  @@index([isFeatured])
+}
+
+// ============================================================
+// PUBLICATION ↔ PERSON
+// ============================================================
+
+model PublicationAuthor {
+  publicationId String
+  personId      String
+  authorOrder   Int
+
+  publication Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([publicationId, personId])
+  @@unique([publicationId, authorOrder])
+  @@index([personId])
+}
+
+// ============================================================
+// PUBLICATION ↔ RESEARCH AREA
+// ============================================================
+
+model PublicationResearchArea {
+  publicationId  String
+  researchAreaId String
+
+  publication  Publication  @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  researchArea ResearchArea @relation(fields: [researchAreaId], references: [id], onDelete: Cascade)
+
+  @@id([publicationId, researchAreaId])
+  @@index([researchAreaId])
+}
+
+// ============================================================
+// PROJECTS
+// ============================================================
+
+model Project {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String?
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  status ProjectStatus @default(PLANNED)
+
+  fundingSource String?
+  projectUrl    String?
+
+  isFeatured Boolean @default(false)
+
+  principalInvestigatorId String
+
+  principalInvestigator Person @relation(fields: [principalInvestigatorId], references: [id], onDelete: Restrict)
+
+  members       ProjectMember[]
+  researchAreas ProjectResearchArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([startDate])
+  @@index([isFeatured])
+  @@index([principalInvestigatorId])
+}
+
+// ============================================================
+// PROJECT ↔ PERSON
+// ============================================================
+
+model ProjectMember {
+  projectId String
+  personId  String
+  role      ProjectMemberRole @default(RESEARCHER)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  person  Person  @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, personId])
+  @@index([personId])
+}
+
+// ============================================================
+// PROJECT ↔ RESEARCH AREA
+// ============================================================
+
+model ProjectResearchArea {
+  projectId      String
+  researchAreaId String
+
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  researchArea ResearchArea @relation(fields: [researchAreaId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, researchAreaId])
+  @@index([researchAreaId])
+}
+
+// ============================================================
+// DATASETS
+// ============================================================
+
+model Dataset {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String?
+
+  version String?
+  license String?
+
+  datasetUrl     String?
+  repositoryUrl  String?
+  publicationUrl String?
+
+  isFeatured Boolean @default(false)
+
+  researchAreas DatasetResearchArea[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isFeatured])
+}
+
+// ============================================================
+// DATASET ↔ RESEARCH AREA
+// ============================================================
+
+model DatasetResearchArea {
+  datasetId      String
+  researchAreaId String
+
+  dataset      Dataset      @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  researchArea ResearchArea @relation(fields: [researchAreaId], references: [id], onDelete: Cascade)
+
+  @@id([datasetId, researchAreaId])
+  @@index([researchAreaId])
+}
+
+// ============================================================
+// AWARDS
+// ============================================================
+
+model Award {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  organization String?
+  awardDate    DateTime?
+  url          String?
+
+  personId String
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([personId])
+  @@index([awardDate])
+}
+
+// ============================================================
+// NEWS
+// ============================================================
+
+model News {
+  id            String  @id @default(cuid())
+  title         String
+  slug          String  @unique
+  excerpt       String?
+  content       String?
+  featuredImage String?
+
+  publishedAt DateTime?
+  isPublished Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([publishedAt])
+}
+
+// ============================================================
+// MEDIA
+// ============================================================
+
+model Media {
+  id          String  @id @default(cuid())
+  fileName    String
+  storagePath String  @unique
+  publicUrl   String?
+
+  mimeType String?
+  fileSize Int?
+
+  altText String?
+  width   Int?
+  height  Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([mimeType])
+}
+
+// ============================================================
+// SITE SETTINGS
+// ============================================================
+
+model SiteSettings {
+  id String @id @default(cuid())
+
+  labName        String
+  universityName String
+
+  shortDescription String?
+
+  email   String?
+  phone   String?
+  address String?
+
+  logo    String?
+  favicon String?
+
+  facebookUrl String?
+  linkedinUrl String?
+  githubUrl   String?
+
+  defaultMetaTitle       String?
+  defaultMetaDescription String?
+
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// LANDING PAGE CMS
+// ============================================================
+
+model LandingPage {
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+
+  isPublished Boolean @default(false)
+
+  sections LandingPageSection[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// LANDING PAGE SECTIONS
+// ============================================================
+
+model LandingPageSection {
+  id            String                 @id @default(cuid())
+  landingPageId String
+  type          LandingPageSectionType
+
+  title    String?
+  subtitle String?
+  content  String?
+
+  displayOrder Int     @default(0)
+  isVisible    Boolean @default(true)
+
+  landingPage LandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
+
+  permissions LandingPagePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([landingPageId])
+  @@index([displayOrder])
+  @@index([type])
+}
+
+// ============================================================
+// LANDING PAGE PERMISSIONS
+// ============================================================
+
+model LandingPagePermission {
+  id        String @id @default(cuid())
+  sectionId String
+  userId    String
+
+  canView    Boolean @default(true)
+  canEdit    Boolean @default(false)
+  canPublish Boolean @default(false)
+
+  section LandingPageSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sectionId, userId])
+  @@index([userId])
 }
