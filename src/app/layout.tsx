@@ -14,12 +14,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://asljkkniu.org"),
+
   title: {
-    default: "Advanced System Lab — JKKNIU",
-    template: "%s | Advanced System Lab — JKKNIU",
+    default: "ASL-JKKNIU — Advanced System Lab",
+    template: "%s | ASL-JKKNIU",
   },
+
   description:
-    "Advanced System Lab (ASL-JKKNIU) — Research in intelligent systems, robotics, computer vision, artificial intelligence, IoT, GNSS, navigation, and industrial automation.",
+    "Advanced System Lab (ASL-JKKNIU) at Jatiya Kabi Kazi Nazrul Islam University — research in intelligent systems, robotics, computer vision, AI, navigation, IoT, and industrial automation.",
+
+  applicationName: "ASL-JKKNIU",
+
+  icons: {
+    icon: "/icon.svg",
+  },
+
+  openGraph: {
+    title: "ASL-JKKNIU — Advanced System Lab",
+    description:
+      "Research in intelligent systems, robotics, computer vision, AI, navigation, and emerging technologies.",
+    type: "website",
+    siteName: "ASL-JKKNIU",
+  },
 };
 
 export default function RootLayout({

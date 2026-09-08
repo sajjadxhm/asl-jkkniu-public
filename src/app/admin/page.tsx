@@ -1,28 +1,28 @@
 import Link from "next/link";
 
-const statistics = [
+const dashboardItems = [
   {
-    label: "People",
-    value: "0",
-    description: "Researchers and members",
+    title: "People",
+    description:
+      "Manage researchers, faculty members, students, and lab members.",
     href: "/admin/people",
   },
   {
-    label: "Publications",
-    value: "0",
-    description: "Research publications",
+    title: "Publications",
+    description:
+      "Manage journal articles, conference papers, books, theses, and other publications.",
     href: "/admin/publications",
   },
   {
-    label: "Projects",
-    value: "0",
-    description: "Research projects",
+    title: "Projects",
+    description:
+      "Manage ongoing, completed, planned, and archived research projects.",
     href: "/admin/projects",
   },
   {
-    label: "News",
-    value: "0",
-    description: "Lab news and updates",
+    title: "News",
+    description:
+      "Manage lab announcements, events, achievements, and research news.",
     href: "/admin/news",
   },
 ];
@@ -30,66 +30,130 @@ const statistics = [
 export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
-      <section>
+      {/* Header */}
+      <div>
         <h2 className="text-2xl font-semibold tracking-tight">
           Dashboard
         </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          Overview of your research lab content and administration.
+        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+          Welcome to the ASL-JKKNIU administration dashboard.
+          Manage your lab website content from here.
         </p>
+      </div>
+
+      {/* Overview */}
+      <section>
+        <div className="mb-4">
+          <h3 className="font-semibold">Content Management</h3>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage the main content areas of the research lab website.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {dashboardItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group rounded-xl border bg-background p-5 transition-colors hover:bg-muted/50"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h4 className="font-semibold">
+                    {item.title}
+                  </h4>
+
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {item.description}
+                  </p>
+                </div>
+
+                <span className="text-muted-foreground transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {statistics.map((statistic) => (
+      {/* Quick Actions */}
+      <section className="rounded-xl border bg-background">
+        <div className="border-b px-5 py-4 sm:px-6">
+          <h3 className="font-semibold">Quick Actions</h3>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Quickly access common content-management tasks.
+          </p>
+        </div>
+
+        <div className="grid gap-3 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
           <Link
-            key={statistic.label}
-            href={statistic.href}
-            className="rounded-xl border bg-background p-5 transition-colors hover:bg-muted/50"
+            href="/admin/people/new"
+            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
           >
-            <p className="text-sm font-medium text-muted-foreground">
-              {statistic.label}
-            </p>
-
-            <p className="mt-2 text-3xl font-bold">
-              {statistic.value}
-            </p>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              {statistic.description}
-            </p>
+            + Add Person
           </Link>
-        ))}
+
+          <Link
+            href="/admin/publications/new"
+            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            + Add Publication
+          </Link>
+
+          <Link
+            href="/admin/projects/new"
+            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            + Add Project
+          </Link>
+
+          <Link
+            href="/admin/news/new"
+            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            + Add News
+          </Link>
+        </div>
       </section>
 
-      <section className="rounded-xl border bg-background p-6">
-        <h3 className="font-semibold">Quick Actions</h3>
+      {/* System Status */}
+      <section className="rounded-xl border bg-muted/20 p-5 sm:p-6">
+        <h3 className="font-semibold">System Status</h3>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          Frequently used content management actions.
-        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div>
+            <p className="text-sm text-muted-foreground">
+              Database
+            </p>
 
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link
-            href="/admin/people"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-          >
-            Manage People
-          </Link>
+            <p className="mt-1 text-sm font-medium">
+              Connected
+            </p>
+          </div>
 
-          <Link
-            href="/admin/publications"
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted"
-          >
-            Manage Publications
-          </Link>
+          <div>
+            <p className="text-sm text-muted-foreground">
+              Authentication
+            </p>
 
-          <Link
-            href="/admin/projects"
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted"
-          >
-            Manage Projects
-          </Link>
+            <p className="mt-1 text-sm font-medium">
+              Active
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-muted-foreground">
+              Environment
+            </p>
+
+            <p className="mt-1 text-sm font-medium">
+              Development
+            </p>
+          </div>
         </div>
       </section>
     </div>
