@@ -1,10 +1,12 @@
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
 
 export const USER_ROLES = [
   "SUPER_ADMIN",
   "ADMIN",
   "EDITOR",
+  "RESEARCHER",
 ] as const;
 
 export type UserRole = (typeof USER_ROLES)[number];
@@ -29,10 +31,16 @@ export async function requireUser() {
   return user;
 }
 
-export async function requireRole(allowedRoles: UserRole[]) {
+export async function requireRole(
+  allowedRoles: UserRole[],
+) {
   const user = await requireUser();
 
   if (!allowedRoles.includes(user.role)) {
+    if (user.role === "RESEARCHER") {
+      redirect("/researcher/dashboard");
+    }
+
     redirect("/admin");
   }
 
@@ -44,4 +52,14 @@ export function hasRole(
   allowedRoles: UserRole[],
 ) {
   return allowedRoles.includes(userRole);
+}
+
+export async function requireResearcher() {
+  const user = await requireUser();
+
+  if (user.role !== "RESEARCHER") {
+    redirect("/admin");
+  }
+
+  return user;
 }

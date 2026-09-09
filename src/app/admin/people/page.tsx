@@ -14,12 +14,21 @@ People </h2>
       </p>
     </div>
 
-    <Link
-      href="/admin/people/new"
-      className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 sm:w-auto"
-    >
-      + Add Person
-    </Link>
+    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+      <Link
+        href="/admin/people/new"
+        className="inline-flex w-full items-center justify-center rounded-md border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted sm:w-auto"
+      >
+        + Add Person
+      </Link>
+
+      <Link
+        href="/admin/researchers/new"
+        className="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 sm:w-auto"
+      >
+        + Create Researcher
+      </Link>
+    </div>
   </div>
 
   <section className="rounded-xl border bg-background">

@@ -79,13 +79,13 @@ export const { auth, handlers } = NextAuth({
       session.user.id = token.id;
     }
       if (
-      token.role === "SUPER_ADMIN" ||
-      token.role === "ADMIN" ||
-      token.role === "EDITOR"
-    ) 
-    {
-      session.user.role = token.role;
-    }
+    token.role === "SUPER_ADMIN" ||
+    token.role === "ADMIN" ||
+    token.role === "EDITOR" ||
+    token.role === "RESEARCHER"
+  ) {
+    session.user.role = token.role;
+  }
   }
 
   return session;

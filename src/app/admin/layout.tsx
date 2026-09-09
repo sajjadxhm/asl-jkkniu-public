@@ -1,4 +1,4 @@
-import { requireUser } from "@/lib/permissions/auth";
+import { requireRole } from "@/lib/permissions/auth";
 import Link from "next/link";
 import { LogoutButton } from "@/components/forms/logout-button";
 
@@ -17,7 +17,11 @@ export default async function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await requireUser();
+  const user = await requireRole([
+    "SUPER_ADMIN",
+    "ADMIN",
+    "EDITOR",
+  ]);
 
   return (
     <div className="min-h-screen bg-muted/30">
