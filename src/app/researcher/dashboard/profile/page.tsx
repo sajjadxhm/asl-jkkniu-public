@@ -33,15 +33,16 @@ export default async function ResearcherProfilePage() {
       profile?.university ??
       "Jatiya Kabi Kazi Nazrul Islam University",
 
-    researchStatement:
-      profile?.researchStatement ?? "",
+    // researchStatement:
+    //   profile?.researchStatement ?? "",
 
     education: profile?.education ?? "",
     experience: profile?.experience ?? "",
     skills: profile?.skills ?? "",
     researchInterests:
       profile?.researchInterests ?? "",
-
+    projects: researcher.person.researcherProfile?.projects ?? "",
+    awards: researcher.person.researcherProfile?.awards ?? "",
     phone: profile?.phone ?? "",
 
     website: person.website ?? "",

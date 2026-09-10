@@ -398,7 +398,7 @@ export function ResearcherProfileForm({
             Tell visitors about your research and expertise.
           </p>
         </div>
-
+{/* 
         <div className="space-y-6">
           <div>
             <label className="text-sm font-medium">
@@ -411,7 +411,7 @@ export function ResearcherProfileForm({
               placeholder="Describe your research focus and goals..."
               className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
             />
-          </div>
+          </div> */}
 
           <div>
             <label className="text-sm font-medium">
@@ -449,6 +449,72 @@ export function ResearcherProfileForm({
               rows={4}
               placeholder="e.g. ROS, Python, MATLAB, OpenCV..."
               className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+            />
+          </div>
+      </section>
+
+      {/* Projects & Awards */}
+      <section className="rounded-2xl border bg-background p-6">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold">
+            Projects & Awards
+          </h2>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Add your major research projects and awards. These
+            will appear automatically on your public researcher
+            profile.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <label className="text-sm font-medium">
+              Research Projects
+            </label>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              List your important research or technical projects.
+              You can use one project per paragraph.
+            </p>
+
+            <textarea
+              {...register("projects")}
+              rows={8}
+              placeholder={`Example:
+
+            Low-Cost GNSS RTK Network Development
+            Research Lead — 2025
+            Developed and field-validated a low-cost dual-frequency GNSS RTK network.
+
+            Smartphone-Based Human Activity Recognition
+            Researcher — 2024
+            Developed a smartphone-based visual-inertial human activity recognition system.`}
+              className="mt-3 w-full rounded-md border bg-background px-3 py-2 text-sm leading-6"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">
+              Awards & Achievements
+            </label>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              List your important academic, research, or
+              professional awards.
+            </p>
+
+            <textarea
+              {...register("awards")}
+              rows={7}
+              placeholder={`Example:
+
+              Session Best Paper Award — APMEE 2025
+              Awarded for the research paper presented at the 6th APMEE conference.
+
+              Research Excellence Award
+              Advanced System Lab — 2025`}
+              className="mt-3 w-full rounded-md border bg-background px-3 py-2 text-sm leading-6"
             />
           </div>
         </div>

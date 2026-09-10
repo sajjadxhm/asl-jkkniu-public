@@ -149,6 +149,10 @@ model ResearcherProfile {
   skills            String?
   researchInterests String?
 
+  // Projects & Awards
+  projects String?
+  awards   String?
+
   // Contact
   phone String?
 

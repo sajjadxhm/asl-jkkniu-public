@@ -275,17 +275,6 @@ const academicLinks = [
               </section>
             )}
 
-            {/* Research Statement */}
-            {profile.researchStatement && (
-              <section>
-                <SectionHeading title="Research Statement" />
-
-                <p className="mt-5 whitespace-pre-line text-base leading-8 text-muted-foreground">
-                  {profile.researchStatement}
-                </p>
-              </section>
-            )}
-
             {/* Research Interests */}
             {profile.researchInterests && (
               <section>
@@ -323,7 +312,9 @@ const academicLinks = [
                   </p>
                 </div>
               </section>
+
             )}
+
 
             {/* =================================================
                 PUBLICATIONS
@@ -532,6 +523,44 @@ const academicLinks = [
                 </div>
               </section>
             )}
+
+            {person.researcherProfile?.projects?.trim() && (
+              <section className="border-t pt-10">
+                <div className="mb-5">
+                  <h2 className="text-xl font-semibold tracking-tight">
+                    Projects
+                  </h2>
+
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Selected research and technical projects.
+                  </p>
+                </div>
+
+                <div className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
+                  {person.researcherProfile.projects}
+                </div>
+              </section>
+            )}
+
+            {person.researcherProfile?.awards?.trim() && (
+              <section className="border-t pt-10">
+                <div className="mb-5">
+                  <h2 className="text-xl font-semibold tracking-tight">
+                    Awards & Achievements
+                  </h2>
+
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Selected academic, research, and professional achievements.
+                  </p>
+                </div>
+
+                <div className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
+                  {person.researcherProfile.awards}
+                </div>
+              </section>
+            )}
+
+
 
             {/* Awards */}
             {person.awards.length > 0 && (

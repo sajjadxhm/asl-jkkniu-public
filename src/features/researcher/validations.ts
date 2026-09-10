@@ -41,12 +41,20 @@ export const researcherProfileSchema = z.object({
   university: z.string().trim().max(200).optional(),
 
   bio: z.string().trim().max(3000).optional(),
-  researchStatement: z.string().trim().max(5000).optional(),
+  // researchStatement: z.string().trim().max(5000).optional(),
   education: z.string().trim().max(5000).optional(),
   experience: z.string().trim().max(5000).optional(),
   skills: z.string().trim().max(3000).optional(),
   researchInterests: z.string().trim().max(3000).optional(),
+  projects: z
+  .string()
+  .max(10000, "Projects must be 10,000 characters or fewer.")
+  .optional(),
 
+awards: z
+  .string()
+  .max(10000, "Awards must be 10,000 characters or fewer.")
+  .optional(),
   phone: z.string().trim().max(30).optional(),
 
   website: flexibleUrl,
