@@ -1,5 +1,7 @@
-import { AslLogo } from "./asl-logo";
 import Link from "next/link";
+
+import { AslLogo } from "./asl-logo";
+import { researcherPortalNavigation } from "./site-navigation";
 
 type FooterLink = {
   label: string;
@@ -58,6 +60,10 @@ const footerLinks: FooterLinkGroups = {
       href: "/contact",
     },
     {
+      label: researcherPortalNavigation.label,
+      href: researcherPortalNavigation.href,
+    },
+    {
       label: "GitHub",
       href: "https://github.com/sajjadxhm/asl-jkkniu",
       external: true,
@@ -77,7 +83,7 @@ export function SiteFooter() {
               className="inline-flex"
               aria-label="ASL-JKKNIU home"
             >
-            <AslLogo className="h-auto w-40" />
+              <AslLogo className="h-auto w-40" />
             </Link>
 
             <p className="mt-5 text-sm leading-6 text-muted-foreground">
@@ -93,34 +99,30 @@ export function SiteFooter() {
           </div>
 
           {/* Footer Link Groups */}
-          {Object.entries(footerLinks).map(
-            ([group, links]) => (
-              <div key={group}>
-                <h3 className="text-sm font-semibold">
-                  {group}
-                </h3>
+          {Object.entries(footerLinks).map(([group, links]) => (
+            <div key={group}>
+              <h3 className="text-sm font-semibold">{group}</h3>
 
-                <ul className="mt-4 space-y-3">
-                  {links.map((link) => (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        {...(link.external
-                          ? {
-                              target: "_blank",
-                              rel: "noopener noreferrer",
-                            }
-                          : {})}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ),
-          )}
+              <ul className="mt-4 space-y-3">
+                {links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      {...(link.external
+                        ? {
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                          }
+                        : {})}
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         {/* Bottom */}

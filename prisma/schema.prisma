@@ -241,15 +241,18 @@ model Publication {
 // ============================================================
 
 model PublicationAuthor {
+  id            String  @id @default(cuid())
   publicationId String
-  personId      String
+  personId      String?
+  externalName  String?
   authorOrder   Int
 
   publication Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
-  person      Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+  person      Person?      @relation(fields: [personId], references: [id], onDelete: Cascade)
 
-  @@id([publicationId, personId])
   @@unique([publicationId, authorOrder])
+  @@unique([publicationId, personId])
+  @@index([publicationId])
   @@index([personId])
 }
 

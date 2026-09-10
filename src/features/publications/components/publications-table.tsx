@@ -22,7 +22,8 @@ type PublicationTableItem = {
   authors: {
     person: {
       name: string;
-    };
+    } | null;
+    externalName: string | null;
   }[];
 };
 
@@ -74,11 +75,14 @@ export function PublicationsTable({
         publication.title
           .toLowerCase()
           .includes(normalizedSearch) ||
-        publication.authors.some((author) =>
-          author.person.name
-            .toLowerCase()
-            .includes(normalizedSearch),
-        );
+            publication.authors
+              .map(
+                (author) =>
+                  author.person?.name ??
+                  author.externalName ??
+                  "Unknown Author",
+              )
+              .join(", ")
 
       const matchesType =
         type === "ALL" ||
@@ -296,11 +300,13 @@ export function PublicationsTable({
 
                       <td className="max-w-xs px-4 py-4 text-muted-foreground">
                         {publication.authors
-                          .map(
-                            (author) =>
-                              author.person.name,
-                          )
-                          .join(", ")}
+                        .map(
+                          (author) =>
+                            author.person?.name ??
+                            author.externalName ??
+                            "Unknown Author",
+                        )
+                        .join(", ")}
                       </td>
 
                       <td className="px-4 py-4 text-muted-foreground">
@@ -381,11 +387,13 @@ export function PublicationsTable({
 
                       <p className="mt-2 text-sm text-muted-foreground">
                         {publication.authors
-                          .map(
-                            (author) =>
-                              author.person.name,
-                          )
-                          .join(", ")}
+                        .map(
+                          (author) =>
+                            author.person?.name ??
+                            author.externalName ??
+                            "Unknown Author",
+                        )
+                        .join(", ")}
                       </p>
                     </div>
 

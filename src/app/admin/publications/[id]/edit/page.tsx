@@ -78,15 +78,24 @@ export default async function EditPublicationPage({
             pdfUrl: publication.pdfUrl,
             citationCount:
               publication.citationCount,
-            isFeatured:
-              publication.isFeatured,
-            authorIds: publication.authors.map(
-              (author) => author.personId,
-            ),
-            researchAreaIds:
-              publication.researchAreas.map(
-                (area) => area.researchAreaId,
-              ),
+              isFeatured:
+                publication.isFeatured,
+
+              authors: publication.authors.map((author) =>
+                author.person
+                  ? {
+                      type: "PERSON" as const,
+                      personId: author.person.id,
+                    }
+                  : {
+                      type: "EXTERNAL" as const,
+                      name: author.externalName ?? "",
+                    },
+                  ),
+              researchAreaIds:
+                publication.researchAreas.map(
+                  (area) => area.researchAreaId,
+                ),
           }}
         />
       </section>

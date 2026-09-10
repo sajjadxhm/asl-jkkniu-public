@@ -78,8 +78,27 @@ export const publicationSchema = z.object({
 
   isFeatured: z.boolean(),
 
-  authorIds: z
-    .array(z.string())
+  authors: z
+    .array(
+      z.discriminatedUnion("type", [
+        z.object({
+          type: z.literal("PERSON"),
+          personId: z.string().min(1),
+        }),
+
+        z.object({
+          type: z.literal("EXTERNAL"),
+          name: z
+            .string()
+            .trim()
+            .min(1, "External author name is required.")
+            .max(
+              200,
+              "External author name must be 200 characters or fewer.",
+            ),
+        }),
+      ]),
+    )
     .min(1, "At least one author is required."),
 
   researchAreaIds: z.array(z.string()),

@@ -4,15 +4,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
 import {
   createPublication,
   updatePublication,
 } from "@/features/publications/actions";
+
+import {
+  createResearcherPublication,
+  updateResearcherPublication,
+} from "@/features/publications/researcher-actions";
+
 import {
   publicationSchema,
   type PublicationInput,
 } from "@/lib/validations/publications";
+
+import { PublicationAuthorManager } from "@/features/publications/components/publication-author-manager";
 
 type PersonOption = {
   id: string;
@@ -27,6 +34,12 @@ type ResearchAreaOption = {
 
 type PublicationFormProps = {
   mode?: "create" | "edit";
+
+  portal?: "admin" | "researcher";
+
+  currentPersonId?: string | null;
+
+  cancelPath?: string;
 
   publication?: {
     id: string;
@@ -49,7 +62,7 @@ type PublicationFormProps = {
     pdfUrl: string | null;
     citationCount: number;
     isFeatured: boolean;
-    authorIds: string[];
+    authors: PublicationInput["authors"];
     researchAreaIds: string[];
   };
 
@@ -77,10 +90,14 @@ function formatDateForInput(date: Date | null) {
 
 export function PublicationForm({
   mode = "create",
+  portal = "admin",
+  currentPersonId,
+  cancelPath = "/admin/publications",
   publication,
   people,
   researchAreas,
 }: PublicationFormProps) {
+
   const router = useRouter();
 
   const [serverError, setServerError] =
@@ -92,9 +109,12 @@ export function PublicationForm({
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<PublicationInput>({
     resolver: zodResolver(publicationSchema),
+    
 
     defaultValues: {
       title: publication?.title ?? "",
@@ -113,19 +133,30 @@ export function PublicationForm({
       citationCount:
         publication?.citationCount ?? 0,
       isFeatured: publication?.isFeatured ?? false,
-      authorIds: publication?.authorIds ?? [],
+      authors:
+        publication?.authors ??
+        (currentPersonId
+          ? [
+              {
+                type: "PERSON",
+                personId: currentPersonId,
+              },
+            ]
+          : []),
       researchAreaIds:
         publication?.researchAreaIds ?? [],
     },
   });
 
+  const authors = watch("authors");
   const isEditMode = mode === "edit";
 
-  async function onSubmit(values: PublicationInput) {
-    setServerError(null);
-    setServerMessage(null);
+async function onSubmit(values: PublicationInput) {
+  setServerError(null);
+  setServerMessage(null);
 
-    try {
+  try {
+    if (portal === "researcher") {
       if (isEditMode) {
         if (!publication) {
           setServerError(
@@ -134,10 +165,11 @@ export function PublicationForm({
           return;
         }
 
-        const result = await updatePublication(
-          publication.id,
-          values,
-        );
+        const result =
+          await updateResearcherPublication(
+            publication.id,
+            values,
+          );
 
         if (!result.success) {
           setServerError(result.message);
@@ -146,13 +178,41 @@ export function PublicationForm({
 
         setServerMessage(result.message);
 
-        router.push("/admin/publications");
+        router.push("/researcher/publications");
         router.refresh();
 
         return;
       }
 
-      const result = await createPublication(values);
+      const result =
+        await createResearcherPublication(values);
+
+      if (!result.success) {
+        setServerError(result.message);
+        return;
+      }
+
+      setServerMessage(result.message);
+
+      router.push("/researcher/publications");
+      router.refresh();
+
+      return;
+    }
+
+    // Existing admin workflow
+    if (isEditMode) {
+      if (!publication) {
+        setServerError(
+          "Publication information is missing.",
+        );
+        return;
+      }
+
+      const result = await updatePublication(
+        publication.id,
+        values,
+      );
 
       if (!result.success) {
         setServerError(result.message);
@@ -163,17 +223,32 @@ export function PublicationForm({
 
       router.push("/admin/publications");
       router.refresh();
-    } catch (error) {
-      console.error(
-        "Failed to save publication:",
-        error,
-      );
 
-      setServerError(
-        "Something went wrong while saving the publication.",
-      );
+      return;
     }
+
+    const result = await createPublication(values);
+
+    if (!result.success) {
+      setServerError(result.message);
+      return;
+    }
+
+    setServerMessage(result.message);
+
+    router.push("/admin/publications");
+    router.refresh();
+  } catch (error) {
+    console.error(
+      "Failed to save publication:",
+      error,
+    );
+
+    setServerError(
+      "Something went wrong while saving the publication.",
+    );
   }
+}
 
   return (
     <form
@@ -263,49 +338,41 @@ export function PublicationForm({
           <h3 className="font-semibold">Authors</h3>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Select authors in their citation order.
+            Add authors and arrange them in the exact order they
+            should appear in the publication.
           </p>
         </div>
+
+        <PublicationAuthorManager
+          people={people}
+          value={authors}
+          onChange={(nextAuthors) =>
+            setValue("authors", nextAuthors, {
+              shouldDirty: true,
+              shouldValidate: true,
+            })
+          }
+          disabled={isSubmitting}
+          currentPersonId={currentPersonId}
+          researcherMode={portal === "researcher"}
+        />
+
+        {errors.authors && (
+          <p className="mt-3 text-sm text-destructive">
+            {errors.authors.message}
+          </p>
+        )}
+      </div>
 
         <div className="space-y-2">
-          {people.length === 0 ? (
-            <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-              No active people are available. Add people
-              before creating a publication.
-            </p>
-          ) : (
-            <select
-              multiple
-              disabled={isSubmitting}
-              {...register("authorIds")}
-              className="min-h-48 w-full rounded-md border bg-background p-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
-            >
-              {people.map((person) => (
-                <option
-                  key={person.id}
-                  value={person.id}
-                >
-                  {person.name}
-                  {person.designation
-                    ? ` — ${person.designation}`
-                    : ""}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {errors.authorIds && (
-            <p className="text-sm text-destructive">
-              {errors.authorIds.message}
+          {portal === "researcher" && (
+            <p className="text-sm text-muted-foreground">
+              You are automatically included as an author and must
+              remain an author of this publication. You can select
+              additional co-authors below.
             </p>
           )}
-
-          <p className="text-xs text-muted-foreground">
-            Hold Ctrl (Windows) or Command (Mac) to select
-            multiple authors.
-          </p>
         </div>
-      </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
@@ -587,7 +654,7 @@ export function PublicationForm({
         <button
           type="button"
           disabled={isSubmitting}
-          onClick={() => router.push("/admin/publications")}
+          onClick={() => router.push(cancelPath)}
           className="w-full rounded-md border px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           Cancel

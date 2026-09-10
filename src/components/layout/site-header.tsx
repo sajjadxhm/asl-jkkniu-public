@@ -6,7 +6,11 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { AslLogo } from "./asl-logo";
-import { siteNavigation } from "./site-navigation";
+import {
+  publicPrimaryAction,
+  researcherPortalNavigation,
+  siteNavigation,
+} from "./site-navigation";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -24,9 +28,14 @@ export function SiteHeader() {
     setMobileMenuOpen(false);
   }
 
+  const researcherPortalActive = isActive(
+    researcherPortalNavigation.href,
+  );
+
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Brand */}
         <Link
           href="/"
           className="flex shrink-0 items-center"
@@ -36,6 +45,7 @@ export function SiteHeader() {
           <AslLogo className="h-auto w-36 sm:w-40 lg:w-[170px]" />
         </Link>
 
+        {/* Desktop Navigation */}
         <nav
           className="hidden items-center gap-1 lg:flex"
           aria-label="Main navigation"
@@ -63,15 +73,28 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden lg:flex lg:items-center">
+        {/* Desktop Actions */}
+        <div className="hidden items-center gap-2 lg:flex">
           <Link
-            href="/join-us"
+            href={researcherPortalNavigation.href}
+            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+              researcherPortalActive
+                ? "bg-muted text-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            {researcherPortalNavigation.label}
+          </Link>
+
+          <Link
+            href={publicPrimaryAction.href}
             className="rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
           >
-            Join Us
+            {publicPrimaryAction.label}
           </Link>
         </div>
 
+        {/* Mobile Menu Button */}
         <button
           type="button"
           aria-label={
@@ -91,6 +114,7 @@ export function SiteHeader() {
         </button>
       </div>
 
+      {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="border-t bg-background lg:hidden">
           <nav
@@ -98,6 +122,7 @@ export function SiteHeader() {
             aria-label="Mobile navigation"
           >
             <div className="flex flex-col gap-1">
+              {/* Main navigation */}
               {siteNavigation.map((item) => {
                 const active = isActive(item.href);
 
@@ -117,12 +142,28 @@ export function SiteHeader() {
                 );
               })}
 
+              {/* Researcher Portal */}
+              <div className="mt-3 border-t pt-3">
+                <Link
+                  href={researcherPortalNavigation.href}
+                  onClick={closeMobileMenu}
+                  className={`block rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                    researcherPortalActive
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  {researcherPortalNavigation.label}
+                </Link>
+              </div>
+
+              {/* Join Us */}
               <Link
-                href="/join-us"
+                href={publicPrimaryAction.href}
                 onClick={closeMobileMenu}
-                className="mt-2 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                className="mt-1 rounded-md bg-primary px-3 py-2.5 text-center text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
               >
-                Join Us
+                {publicPrimaryAction.label}
               </Link>
             </div>
           </nav>

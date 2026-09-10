@@ -361,21 +361,27 @@ const academicLinks = [
                           {publication.authors.map(
                             (author, index) => (
                               <span
-                                key={author.person.id}
+                                key={
+                                  author.person?.id ??
+                                  `external-${author.externalName}-${index}`
+                                }
                               >
                                 {index > 0 && ", "}
 
-                                <Link
-                                  href={`/people/${author.person.slug}`}
-                                  className={
-                                    author.person.id ===
-                                    person.id
-                                      ? "font-medium text-foreground"
-                                      : "hover:text-primary"
-                                  }
-                                >
-                                  {author.person.name}
-                                </Link>
+                                {author.person ? (
+                                  <Link
+                                    href={`/people/${author.person.slug}`}
+                                    className={
+                                      author.person.id === person.id
+                                        ? "font-medium text-foreground"
+                                        : "hover:text-primary"
+                                    }
+                                  >
+                                    {author.person.name}
+                                  </Link>
+                                ) : (
+                                  <span>{author.externalName}</span>
+                                )}
                               </span>
                             ),
                           )}

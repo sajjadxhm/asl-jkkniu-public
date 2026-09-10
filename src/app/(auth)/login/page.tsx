@@ -1,29 +1,53 @@
+import Link from "next/link";
+
+import { AslLogo } from "@/components/layout/asl-logo";
 import { LoginForm } from "@/components/forms/login-form";
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-8">
+    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-10">
       <div className="w-full max-w-md">
-        <div className="rounded-xl border bg-background p-6 shadow-sm sm:p-8">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
-              ASL
-            </div>
+        {/* Branding */}
+        <div className="mb-8 text-center">
+          <Link
+            href="/"
+            className="inline-flex"
+            aria-label="ASL-JKKNIU home"
+          >
+            <AslLogo className="h-auto w-40" />
+          </Link>
 
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Research Lab Admin
-            </h1>
+          <p className="mt-5 text-sm font-medium text-primary">
+            Researcher Portal
+          </p>
 
-            <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to manage ASL-JKKNIU content.
-            </p>
-          </div>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+            Researcher Login
+          </h1>
 
-          <LoginForm />
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Sign in to manage your academic profile and
+            research activities.
+          </p>
         </div>
 
+        {/* Login Card */}
+        <div className="rounded-2xl border bg-background p-6 shadow-sm sm:p-8">
+          <LoginForm />
+
+          <div className="mt-6 border-t pt-6 text-center">
+            <Link
+              href="/"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              ← Back to ASL-JKKNIU website
+            </Link>
+          </div>
+        </div>
+
+        {/* Footer note */}
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Advanced System Lab — JKKNIU
+          Authorized ASL-JKKNIU researchers only.
         </p>
       </div>
     </main>

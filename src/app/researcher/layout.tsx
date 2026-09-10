@@ -1,16 +1,28 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
+
 import { requireResearcher } from "@/lib/permissions/auth";
+import { getResearcherByUserId } from "@/features/researcher/queries";
+
+import { ResearcherPortalShell } from "@/components/layout/researcher-portal-shell";
 
 export default async function ResearcherLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  await requireResearcher();
+  const user = await requireResearcher();
+
+  const researcher = await getResearcherByUserId(user.id);
+
+  const person = researcher?.person;
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <ResearcherPortalShell
+      researcherName={person?.name ?? user.name ?? "Researcher"}
+      profileSlug={person?.slug ?? null}
+      profileImage={person?.profileImage ?? null}
+    >
       {children}
-    </div>
+    </ResearcherPortalShell>
   );
 }

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { requireResearcher } from "@/lib/permissions/auth";
@@ -31,42 +33,72 @@ export default async function ResearcherProfilePage() {
       profile?.university ??
       "Jatiya Kabi Kazi Nazrul Islam University",
 
-    researchStatement: profile?.researchStatement ?? "",
+    researchStatement:
+      profile?.researchStatement ?? "",
+
     education: profile?.education ?? "",
     experience: profile?.experience ?? "",
     skills: profile?.skills ?? "",
-    researchInterests: profile?.researchInterests ?? "",
+    researchInterests:
+      profile?.researchInterests ?? "",
 
     phone: profile?.phone ?? "",
 
     website: person.website ?? "",
-    googleScholarUrl: person.googleScholarUrl ?? "",
+    googleScholarUrl:
+      person.googleScholarUrl ?? "",
     orcidUrl: person.orcidUrl ?? "",
-    linkedinUrl: person.linkedinUrl ?? "",
+    linkedinUrl:
+      person.linkedinUrl ?? "",
     githubUrl: person.githubUrl ?? "",
 
     isPublic: profile?.isPublic ?? true,
   } as const;
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-10">
-        <p className="text-sm font-medium text-primary">
-          Researcher Portal
-        </p>
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      {/* Page heading */}
+      <div className="mb-8">
+        <Link
+          href="/researcher/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Back to Dashboard
+        </Link>
 
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">
-          My Profile
-        </h1>
+        <div className="mt-6 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-sm font-medium text-primary">
+              Researcher Portal
+            </p>
 
-        <p className="mt-2 max-w-2xl text-muted-foreground">
-          Keep your academic profile up to date. This
-          information can be displayed on your public
-          ASL-JKKNIU researcher page.
-        </p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+              My Profile
+            </h1>
+
+            <p className="mt-2 max-w-2xl text-muted-foreground">
+              Keep your academic profile up to date. This
+              information can be displayed on your public
+              ASL-JKKNIU researcher page.
+            </p>
+          </div>
+
+          <Link
+            href={`/people/${person.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-md border bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            <ExternalLink className="size-4" />
+            View Public Profile
+          </Link>
+        </div>
       </div>
 
-      <ResearcherProfileForm initialData={initialData} />
-    </main>
+      <ResearcherProfileForm
+        initialData={initialData}
+      />
+    </div>
   );
 }
