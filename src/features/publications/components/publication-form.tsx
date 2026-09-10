@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+
 import {
   createPublication,
   updatePublication,
@@ -97,7 +98,6 @@ export function PublicationForm({
   people,
   researchAreas,
 }: PublicationFormProps) {
-
   const router = useRouter();
 
   const [serverError, setServerError] =
@@ -114,7 +114,6 @@ export function PublicationForm({
     formState: { errors, isSubmitting },
   } = useForm<PublicationInput>({
     resolver: zodResolver(publicationSchema),
-    
 
     defaultValues: {
       title: publication?.title ?? "",
@@ -132,7 +131,20 @@ export function PublicationForm({
       pdfUrl: publication?.pdfUrl ?? "",
       citationCount:
         publication?.citationCount ?? 0,
+
+      /*
+       * Featured status is an administrative field.
+       *
+       * It is still loaded into the form because the same
+       * form component is used by both admin and researcher
+       * portals.
+       *
+       * Researchers cannot modify this value because the
+       * Featured Publication UI is only rendered for admins,
+       * and the researcher server action ignores it.
+       */
       isFeatured: publication?.isFeatured ?? false,
+
       authors:
         publication?.authors ??
         (currentPersonId
@@ -143,33 +155,82 @@ export function PublicationForm({
               },
             ]
           : []),
+
       researchAreaIds:
         publication?.researchAreaIds ?? [],
     },
   });
 
   const authors = watch("authors");
+
+  /*
+   * Watch the Featured Publication value only for the
+   * administrative form.
+   *
+   * This value is not rendered or editable in researcher mode.
+   */
+  const isFeatured = watch("isFeatured");
+
   const isEditMode = mode === "edit";
 
-async function onSubmit(values: PublicationInput) {
-  setServerError(null);
-  setServerMessage(null);
+  async function onSubmit(values: PublicationInput) {
+    setServerError(null);
+    setServerMessage(null);
 
-  try {
-    if (portal === "researcher") {
-      if (isEditMode) {
-        if (!publication) {
-          setServerError(
-            "Publication information is missing.",
-          );
+    /*
+     * Debug information.
+     *
+     * This confirms which portal is submitting the form
+     * and what React Hook Form contains at submission time.
+     */
+    console.log("=== PUBLICATION SUBMISSION ===");
+    console.log("isFeatured:", values.isFeatured);
+    console.log("title:", values.title);
+    console.log("mode:", mode);
+    console.log("portal:", portal);
+
+    try {
+      /*
+       * =====================================================
+       * RESEARCHER PORTAL
+       * =====================================================
+       */
+      if (portal === "researcher") {
+        /*
+         * Edit existing publication
+         */
+        if (isEditMode) {
+          if (!publication) {
+            setServerError(
+              "Publication information is missing.",
+            );
+            return;
+          }
+
+          const result =
+            await updateResearcherPublication(
+              publication.id,
+              values,
+            );
+
+          if (!result.success) {
+            setServerError(result.message);
+            return;
+          }
+
+          setServerMessage(result.message);
+
+          router.push("/researcher/publications");
+          router.refresh();
+
           return;
         }
 
+        /*
+         * Create new publication
+         */
         const result =
-          await updateResearcherPublication(
-            publication.id,
-            values,
-          );
+          await createResearcherPublication(values);
 
         if (!result.success) {
           setServerError(result.message);
@@ -184,35 +245,45 @@ async function onSubmit(values: PublicationInput) {
         return;
       }
 
-      const result =
-        await createResearcherPublication(values);
+      /*
+       * =====================================================
+       * ADMIN PORTAL
+       * =====================================================
+       */
 
-      if (!result.success) {
-        setServerError(result.message);
-        return;
-      }
+      /*
+       * Edit existing publication
+       */
+      if (isEditMode) {
+        if (!publication) {
+          setServerError(
+            "Publication information is missing.",
+          );
+          return;
+        }
 
-      setServerMessage(result.message);
-
-      router.push("/researcher/publications");
-      router.refresh();
-
-      return;
-    }
-
-    // Existing admin workflow
-    if (isEditMode) {
-      if (!publication) {
-        setServerError(
-          "Publication information is missing.",
+        const result = await updatePublication(
+          publication.id,
+          values,
         );
+
+        if (!result.success) {
+          setServerError(result.message);
+          return;
+        }
+
+        setServerMessage(result.message);
+
+        router.push("/admin/publications");
+        router.refresh();
+
         return;
       }
 
-      const result = await updatePublication(
-        publication.id,
-        values,
-      );
+      /*
+       * Create new publication
+       */
+      const result = await createPublication(values);
 
       if (!result.success) {
         setServerError(result.message);
@@ -223,38 +294,27 @@ async function onSubmit(values: PublicationInput) {
 
       router.push("/admin/publications");
       router.refresh();
+    } catch (error) {
+      console.error(
+        "Failed to save publication:",
+        error,
+      );
 
-      return;
+      setServerError(
+        "Something went wrong while saving the publication.",
+      );
     }
-
-    const result = await createPublication(values);
-
-    if (!result.success) {
-      setServerError(result.message);
-      return;
-    }
-
-    setServerMessage(result.message);
-
-    router.push("/admin/publications");
-    router.refresh();
-  } catch (error) {
-    console.error(
-      "Failed to save publication:",
-      error,
-    );
-
-    setServerError(
-      "Something went wrong while saving the publication.",
-    );
   }
-}
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-8"
     >
+      {/* =====================================================
+          BASIC PUBLICATION INFORMATION
+          ===================================================== */}
+
       <div className="grid gap-6">
         <div className="space-y-2">
           <label
@@ -333,9 +393,15 @@ async function onSubmit(values: PublicationInput) {
         </div>
       </div>
 
+      {/* =====================================================
+          AUTHORS
+          ===================================================== */}
+
       <div className="rounded-xl border p-5 sm:p-6">
         <div className="mb-5">
-          <h3 className="font-semibold">Authors</h3>
+          <h3 className="font-semibold">
+            Authors
+          </h3>
 
           <p className="mt-1 text-sm text-muted-foreground">
             Add authors and arrange them in the exact order they
@@ -364,15 +430,23 @@ async function onSubmit(values: PublicationInput) {
         )}
       </div>
 
-        <div className="space-y-2">
-          {portal === "researcher" && (
-            <p className="text-sm text-muted-foreground">
-              You are automatically included as an author and must
-              remain an author of this publication. You can select
-              additional co-authors below.
-            </p>
-          )}
-        </div>
+      {/* =====================================================
+          RESEARCHER-SPECIFIC AUTHOR INFORMATION
+          ===================================================== */}
+
+      <div className="space-y-2">
+        {portal === "researcher" && (
+          <p className="text-sm text-muted-foreground">
+            You are automatically included as an author and must
+            remain an author of this publication. You can select
+            additional co-authors below.
+          </p>
+        )}
+      </div>
+
+      {/* =====================================================
+          PUBLICATION DETAILS
+          ===================================================== */}
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
@@ -430,6 +504,10 @@ async function onSubmit(values: PublicationInput) {
         </div>
       </div>
 
+      {/* =====================================================
+          ABSTRACT
+          ===================================================== */}
+
       <div className="space-y-2">
         <label
           htmlFor="abstract"
@@ -453,6 +531,10 @@ async function onSubmit(values: PublicationInput) {
           </p>
         )}
       </div>
+
+      {/* =====================================================
+          PUBLICATION LINKS
+          ===================================================== */}
 
       <div className="rounded-xl border p-5 sm:p-6">
         <div className="mb-5">
@@ -536,55 +618,77 @@ async function onSubmit(values: PublicationInput) {
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div className="space-y-2">
-          <label
-            htmlFor="citationCount"
-            className="text-sm font-medium"
-          >
-            Citation Count
-          </label>
+      {/* =====================================================
+          ADMINISTRATIVE PUBLICATION INFORMATION
+          =====================================================
 
-          <input
-            id="citationCount"
-            type="number"
-            min="0"
-            disabled={isSubmitting}
-            {...register("citationCount", {
-              valueAsNumber: true,
-            })}
-            className="w-full rounded-md border bg-background px-3 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
-          />
+          Citation Count and Featured Publication are
+          administrative fields.
 
-          {errors.citationCount && (
-            <p className="text-sm text-destructive">
-              {errors.citationCount.message}
-            </p>
-          )}
-        </div>
+          They are intentionally visible only in the admin
+          portal. Researchers cannot modify either field.
+          ===================================================== */}
 
-        <div className="flex items-center">
-          <label className="flex cursor-pointer items-start gap-3">
+      {portal === "admin" && (
+        <div className="grid gap-6 sm:grid-cols-2">
+          {/* Citation Count */}
+
+          <div className="space-y-2">
+            <label
+              htmlFor="citationCount"
+              className="text-sm font-medium"
+            >
+              Citation Count
+            </label>
+
             <input
-              type="checkbox"
-              {...register("isFeatured")}
+              id="citationCount"
+              type="number"
+              min="0"
               disabled={isSubmitting}
-              className="mt-0.5 size-4 rounded border"
+              {...register("citationCount", {
+                valueAsNumber: true,
+              })}
+              className="w-full rounded-md border bg-background px-3 py-2.5 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/20"
             />
 
-            <span>
-              <span className="block text-sm font-medium">
-                Featured publication
-              </span>
+            {errors.citationCount && (
+              <p className="text-sm text-destructive">
+                {errors.citationCount.message}
+              </p>
+            )}
+          </div>
 
-              <span className="mt-1 block text-xs text-muted-foreground">
-                Featured publications can appear in
-                highlighted sections of the public website.
+          {/* Featured Publication */}
+
+          <div className="flex items-center">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                {...register("isFeatured")}
+                checked={isFeatured}
+                disabled={isSubmitting}
+                className="mt-0.5 size-4 rounded border"
+              />
+
+              <span>
+                <span className="block text-sm font-medium">
+                  Featured publication
+                </span>
+
+                <span className="mt-1 block text-xs text-muted-foreground">
+                  Featured publications can appear in
+                  highlighted sections of the public website.
+                </span>
               </span>
-            </span>
-          </label>
+            </label>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* =====================================================
+          RESEARCH AREAS
+          ===================================================== */}
 
       <div className="rounded-xl border p-5 sm:p-6">
         <div className="mb-5">
@@ -632,6 +736,10 @@ async function onSubmit(values: PublicationInput) {
         )}
       </div>
 
+      {/* =====================================================
+          SERVER MESSAGES
+          ===================================================== */}
+
       {serverError && (
         <p
           role="alert"
@@ -649,6 +757,10 @@ async function onSubmit(values: PublicationInput) {
           {serverMessage}
         </p>
       )}
+
+      {/* =====================================================
+          FORM ACTIONS
+          ===================================================== */}
 
       <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-end">
         <button

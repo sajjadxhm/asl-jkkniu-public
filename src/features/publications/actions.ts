@@ -14,6 +14,45 @@ function createSlug(title: string) {
     .replace(/^-+|-+$/g, "")}-${Date.now()}`;
 }
 
+/*
+ * Convert the HTML date input value (YYYY-MM-DD)
+ * into a valid JavaScript Date for Prisma DateTime.
+ *
+ * Example:
+ * "2026-07-15"
+ * →
+ * 2026-07-15T00:00:00.000Z
+ */
+function parsePublicationDate(
+  date: string | undefined,
+): Date | null {
+  if (!date) return null;
+
+  const [year, month, day] = date.split("-").map(Number);
+
+  if (
+    !year ||
+    !month ||
+    !day ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31
+  ) {
+    return null;
+  }
+
+  const parsedDate = new Date(
+    Date.UTC(year, month - 1, day),
+  );
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  return parsedDate;
+}
+
 export async function createPublication(input: unknown) {
   await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
 
@@ -22,7 +61,8 @@ export async function createPublication(input: unknown) {
   if (!result.success) {
     return {
       success: false,
-      message: "Please check the publication information and try again.",
+      message:
+        "Please check the publication information and try again.",
       errors: result.error.flatten().fieldErrors,
     };
   }
@@ -88,9 +128,10 @@ export async function createPublication(input: unknown) {
         researchAreas.map((area) => area.id),
       );
 
-      const hasInvalidResearchArea = data.researchAreaIds.some(
-        (areaId) => !validResearchAreaIds.has(areaId),
-      );
+      const hasInvalidResearchArea =
+        data.researchAreaIds.some(
+          (areaId) => !validResearchAreaIds.has(areaId),
+        );
 
       if (hasInvalidResearchArea) {
         return {
@@ -100,6 +141,13 @@ export async function createPublication(input: unknown) {
         };
       }
     }
+
+    /*
+     * Parse publication date once before the transaction.
+     */
+    const publicationDate = parsePublicationDate(
+      data.publicationDate,
+    );
 
     /*
      * Create publication and relationships in one transaction.
@@ -114,11 +162,16 @@ export async function createPublication(input: unknown) {
           journal: data.journal || null,
           conference: data.conference || null,
           publisher: data.publisher || null,
-          publicationDate: data.publicationDate || null,
+          publicationDate,
           doi: data.doi || null,
           url: data.url || null,
           pdfUrl: data.pdfUrl || null,
           citationCount: data.citationCount,
+
+          /*
+           * Super Admin/Admin/Editor can control
+           * the Featured Publication status.
+           */
           isFeatured: data.isFeatured,
         },
       });
@@ -160,6 +213,29 @@ export async function createPublication(input: unknown) {
     });
 
     /*
+     * Verify the value actually stored by Prisma.
+     */
+    const verifiedPublication =
+      await prisma.publication.findUnique({
+        where: {
+          id: created.id,
+        },
+        select: {
+          id: true,
+          title: true,
+          isFeatured: true,
+        },
+      });
+
+    console.log("=== CREATE PUBLICATION VERIFICATION ===");
+    console.log("Submitted isFeatured:", data.isFeatured);
+    console.log(
+      "Database isFeatured:",
+      verifiedPublication?.isFeatured,
+    );
+    console.log("Publication ID:", created.id);
+
+    /*
      * Refresh affected pages.
      */
     revalidatePath("/admin/publications");
@@ -194,7 +270,8 @@ export async function updatePublication(
   if (!result.success) {
     return {
       success: false,
-      message: "Please check the publication information and try again.",
+      message:
+        "Please check the publication information and try again.",
       errors: result.error.flatten().fieldErrors,
     };
   }
@@ -288,9 +365,10 @@ export async function updatePublication(
         researchAreas.map((area) => area.id),
       );
 
-      const hasInvalidResearchArea = data.researchAreaIds.some(
-        (areaId) => !validResearchAreaIds.has(areaId),
-      );
+      const hasInvalidResearchArea =
+        data.researchAreaIds.some(
+          (areaId) => !validResearchAreaIds.has(areaId),
+        );
 
       if (hasInvalidResearchArea) {
         return {
@@ -300,6 +378,29 @@ export async function updatePublication(
         };
       }
     }
+
+    /*
+     * Parse publication date before entering the transaction.
+     */
+    const publicationDate = parsePublicationDate(
+      data.publicationDate,
+    );
+
+    /*
+     * Server-side diagnostic.
+     */
+    console.log("=== UPDATE PUBLICATION ===");
+    console.log("Publication ID:", id);
+    console.log("Submitted isFeatured:", data.isFeatured);
+    console.log("Publication title:", data.title);
+    console.log(
+      "Submitted publicationDate:",
+      data.publicationDate,
+    );
+    console.log(
+      "Parsed publicationDate:",
+      publicationDate?.toISOString() ?? null,
+    );
 
     /*
      * Update publication and relationships in one transaction.
@@ -316,11 +417,15 @@ export async function updatePublication(
           journal: data.journal || null,
           conference: data.conference || null,
           publisher: data.publisher || null,
-          publicationDate: data.publicationDate || null,
+          publicationDate,
           doi: data.doi || null,
           url: data.url || null,
           pdfUrl: data.pdfUrl || null,
           citationCount: data.citationCount,
+
+          /*
+           * Explicitly write the boolean value.
+           */
           isFeatured: data.isFeatured,
         },
       });
@@ -328,8 +433,8 @@ export async function updatePublication(
       /*
        * Replace author relationships.
        *
-       * This is intentional because the submitted array
-       * represents the complete and exact author order.
+       * The submitted array represents the complete
+       * and exact author order.
        */
       await tx.publicationAuthor.deleteMany({
         where: {
@@ -374,6 +479,55 @@ export async function updatePublication(
     });
 
     /*
+     * Read the record again immediately after the transaction.
+     */
+    const verifiedPublication =
+      await prisma.publication.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          title: true,
+          isFeatured: true,
+        },
+      });
+
+    console.log("=== UPDATE PUBLICATION VERIFICATION ===");
+    console.log("Submitted isFeatured:", data.isFeatured);
+    console.log(
+      "Database isFeatured:",
+      verifiedPublication?.isFeatured,
+    );
+    console.log(
+      "Expected isFeatured:",
+      data.isFeatured,
+    );
+
+    /*
+     * Detect an unexpected database result.
+     */
+    if (
+      verifiedPublication?.isFeatured !==
+      data.isFeatured
+    ) {
+      console.error(
+        "WARNING: isFeatured value did not persist as expected.",
+        {
+          submitted: data.isFeatured,
+          database: verifiedPublication?.isFeatured,
+          publicationId: id,
+        },
+      );
+
+      return {
+        success: false,
+        message:
+          "The publication was not saved correctly. The Featured Publication value could not be verified.",
+      };
+    }
+
+    /*
      * Refresh affected pages.
      */
     revalidatePath("/admin/publications");
@@ -388,7 +542,9 @@ export async function updatePublication(
      */
     for (const author of existingPublication.authors) {
       if (author.person?.slug) {
-        revalidatePath(`/people/${author.person.slug}`);
+        revalidatePath(
+          `/people/${author.person.slug}`,
+        );
       }
     }
 
@@ -415,7 +571,10 @@ export async function updatePublication(
       message: "Publication updated successfully.",
     };
   } catch (error) {
-    console.error("Failed to update publication:", error);
+    console.error(
+      "Failed to update publication:",
+      error,
+    );
 
     return {
       success: false,
@@ -470,7 +629,9 @@ export async function deletePublication(id: string) {
 
     for (const author of existingPublication.authors) {
       if (author.person?.slug) {
-        revalidatePath(`/people/${author.person.slug}`);
+        revalidatePath(
+          `/people/${author.person.slug}`,
+        );
       }
     }
 
@@ -479,7 +640,10 @@ export async function deletePublication(id: string) {
       message: "Publication deleted successfully.",
     };
   } catch (error) {
-    console.error("Failed to delete publication:", error);
+    console.error(
+      "Failed to delete publication:",
+      error,
+    );
 
     return {
       success: false,
