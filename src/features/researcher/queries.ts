@@ -35,3 +35,33 @@ export async function getResearcherByUserId(userId: string) {
     },
   });
 }
+
+export async function getResearchersForAccountManagement() {
+  return prisma.user.findMany({
+    where: {
+      role: "RESEARCHER",
+    },
+
+    orderBy: {
+      name: "asc",
+    },
+
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      isActive: true,
+      mustChangePassword: true,
+
+      person: {
+        select: {
+          id: true,
+          slug: true,
+          profileImage: true,
+          designation: true,
+          department: true,
+        },
+      },
+    },
+  });
+}

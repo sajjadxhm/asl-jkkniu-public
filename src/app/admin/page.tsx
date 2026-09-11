@@ -4,7 +4,7 @@ const dashboardItems = [
   {
     title: "People",
     description:
-      "Manage researchers, faculty members, students, and lab members.",
+      "Manage directory profiles and public visibility, including alumni and co-researchers.",
     href: "/admin/people",
   },
   {

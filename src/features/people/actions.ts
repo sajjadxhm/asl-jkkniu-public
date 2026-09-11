@@ -66,6 +66,7 @@ isActive,
 });
 
 revalidatePath("/admin/people");
+revalidatePath("/people", "layout");
 
 return {
 success: true,
@@ -129,6 +130,7 @@ isActive,
 });
 
 revalidatePath("/admin/people");
+revalidatePath("/people", "layout");
 revalidatePath(`/admin/people/${id}/edit`);
 
 return {
@@ -139,34 +141,53 @@ personId: updatedPerson.id,
 }
 
 export async function deletePerson(id: string) {
-await requireRole(["SUPER_ADMIN", "ADMIN"]);
+  await requireRole(["SUPER_ADMIN", "ADMIN"]);
 
-const existingPerson = await prisma.person.findUnique({
-where: {
-id,
-},
-select: {
-id: true,
-},
-});
+  const existingPerson = await prisma.person.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      user: {
+        select: {
+          id: true,
+        },
+      },
+      researcherProfile: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
 
-if (!existingPerson) {
-return {
-success: false,
-message: "Person not found.",
-};
-}
+  if (!existingPerson) {
+    return {
+      success: false,
+      message: "Person not found.",
+    };
+  }
 
-await prisma.person.delete({
-where: {
-id,
-},
-});
+  if (existingPerson.user || existingPerson.researcherProfile) {
+    return {
+      success: false,
+      message:
+        "Researcher profiles cannot be deleted from People. Manage the researcher account from the Researchers section.",
+    };
+  }
 
-revalidatePath("/admin/people");
+  await prisma.person.delete({
+    where: {
+      id,
+    },
+  });
 
-return {
-success: true,
-message: "Person deleted successfully.",
-};
+  revalidatePath("/admin/people");
+revalidatePath("/people", "layout");
+
+  return {
+    success: true,
+    message: "Person deleted successfully.",
+  };
 }

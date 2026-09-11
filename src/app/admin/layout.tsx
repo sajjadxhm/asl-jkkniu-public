@@ -57,6 +57,16 @@ export default async function AdminLayout({
             People
           </Link>
 
+          {user.role === "SUPER_ADMIN" && (
+            <Link
+              href="/admin/researchers"
+              className="flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+            >
+              <Users className="mr-3 size-4" />
+              Researcher Accounts
+            </Link>
+          )}
+
           <Link
             href="/admin/publications"
             className="flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
@@ -118,6 +128,13 @@ export default async function AdminLayout({
             <LogoutButton />
             </div>
           </header>
+
+          <nav aria-label="People management" className="flex flex-wrap gap-4 border-b bg-background px-4 py-3 text-sm font-medium md:hidden">
+            <Link href="/admin/people" className="hover:underline">People</Link>
+            {user.role === "SUPER_ADMIN" && (
+              <Link href="/admin/researchers" className="hover:underline">Researcher Accounts</Link>
+            )}
+          </nav>
 
           <main className="flex-1 p-4 md:p-6">{children}</main>
         </div>

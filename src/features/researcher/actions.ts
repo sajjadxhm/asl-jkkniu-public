@@ -114,6 +114,7 @@ export async function createResearcher(input: unknown) {
         passwordHash,
         role: "RESEARCHER",
         isActive: true,
+        mustChangePassword: true,
         personId: person.id,
       },
     });

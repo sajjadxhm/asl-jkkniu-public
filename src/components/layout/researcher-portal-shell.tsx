@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Award,
   BookOpen,
   ChevronRight,
   ExternalLink,
@@ -12,6 +11,7 @@ import {
   LogOut,
   Menu,
   UserRound,
+  UsersRound,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -44,14 +44,14 @@ const navigationItems = [
     icon: BookOpen,
   },
   {
-    label: "Projects",
+    label: "ASL Projects",
     href: "/researcher/projects",
     icon: FolderKanban,
   },
   {
-    label: "Awards",
-    href: "/researcher/awards",
-    icon: Award,
+    label: "Alumni & Co-researchers",
+    href: "/researcher/people",
+    icon: UsersRound,
   },
 ];
 
@@ -338,11 +338,10 @@ export function ResearcherPortalShell({
       <footer className="border-t bg-background">
         <div className="px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              © {new Date().getFullYear()} ASL-JKKNIU. All rights
-              reserved.
-            </p>
-
+          <p>
+            © {new Date().getFullYear()} ASL-JKKNIU. All rights
+            reserved.
+          </p>
             <p>Researcher Portal</p>
           </div>
         </div>

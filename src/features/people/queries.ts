@@ -38,10 +38,38 @@ export async function getPeople() {
           },
         },
       },
+
+      user: {
+        select: {
+          isActive: true,
+        },
+      },
     },
   });
 }
 
+// Management includes people regardless of public visibility.
+export async function getPeopleForManagement() {
+  return prisma.person.findMany({
+    orderBy: [
+      { displayOrder: "asc" },
+      { name: "asc" },
+    ],
+    include: {
+      researcherProfile: true,
+      researchAreas: {
+        include: {
+          researchArea: true,
+        },
+        orderBy: {
+          researchArea: {
+            displayOrder: "asc",
+          },
+        },
+      },
+    },
+  });
+}
 export async function getPersonById(id: string) {
   return prisma.person.findUnique({
     where: {
@@ -139,6 +167,59 @@ export async function getPublicResearcherBySlug(slug: string) {
           awardDate: "desc",
         },
       },
+    },
+  });
+}
+
+export async function getAlumniAndCoResearchers() {
+  return prisma.person.findMany({
+    where: {
+      researcherProfile: null,
+      isActive: true,
+    },
+
+    orderBy: [
+      {
+        displayOrder: "asc",
+      },
+      {
+        name: "asc",
+      },
+    ],
+
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      linkedinUrl: true,
+      profileImage: true,
+      isActive: true,
+    },
+  });
+}
+
+export async function getAlumniAndCoResearchersForManagement() {
+  return prisma.person.findMany({
+    where: {
+      researcherProfile: null,
+    },
+
+    orderBy: [
+      {
+        displayOrder: "asc",
+      },
+      {
+        name: "asc",
+      },
+    ],
+
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      linkedinUrl: true,
+      profileImage: true,
+      isActive: true,
     },
   });
 }

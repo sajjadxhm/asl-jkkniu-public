@@ -54,11 +54,21 @@ export function hasRole(
   return allowedRoles.includes(userRole);
 }
 
-export async function requireResearcher() {
+export async function requireResearcherAccount() {
   const user = await requireUser();
 
   if (user.role !== "RESEARCHER") {
     redirect("/admin");
+  }
+
+  return user;
+}
+
+export async function requireResearcher() {
+  const user = await requireResearcherAccount();
+
+  if (user.mustChangePassword) {
+    redirect("/researcher/change-password");
   }
 
   return user;

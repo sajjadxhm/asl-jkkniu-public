@@ -245,11 +245,11 @@ Full Name <span className="ml-1 text-destructive">*</span> </label>
 
       <span>
         <span className="block text-sm font-medium">
-          Active member
+          Show on public People page
         </span>
 
         <span className="mt-1 block text-xs text-muted-foreground">
-          Active members can appear on the public lab website.
+          When disabled, this person will be hidden from the public People page but will remain available in Admin management.
         </span>
       </span>
     </label>

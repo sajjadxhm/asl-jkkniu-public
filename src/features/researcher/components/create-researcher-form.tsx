@@ -15,7 +15,7 @@ import {
 const positions = [
   {
     value: "RESEARCHER",
-    label: "Researcher",
+    label: "Research Assistant",
   },
   {
     value: "LEAD_RESEARCHER",

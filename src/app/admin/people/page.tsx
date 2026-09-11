@@ -1,16 +1,15 @@
 import Link from "next/link";
 
 import { PeopleTable } from "@/features/people/components/people-table";
-import { getPeople } from "@/features/people/queries";
+import { getPeopleForManagement } from "@/features/people/queries";
 
 export default async function AdminPeoplePage() {
-const people = await getPeople();
+const people = await getPeopleForManagement();
 
 return ( <div className="space-y-6"> <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"> <div> <h2 className="text-2xl font-semibold tracking-tight">
 People </h2>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        Manage researchers, faculty members, students, and
-        lab members.
+        Manage directory profiles and public visibility, including alumni and co-researchers. Manage researcher logins and passwords in Researcher Accounts.
       </p>
     </div>
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { requireResearcher } from "@/lib/permissions/auth";
+import { requireResearcherAccount } from "@/lib/permissions/auth";
 import { getResearcherByUserId } from "@/features/researcher/queries";
 
 import { ResearcherPortalShell } from "@/components/layout/researcher-portal-shell";
@@ -10,7 +10,7 @@ export default async function ResearcherLayout({
 }: {
   children: ReactNode;
 }) {
-  const user = await requireResearcher();
+  const user = await requireResearcherAccount();
 
   const researcher = await getResearcherByUserId(user.id);
 

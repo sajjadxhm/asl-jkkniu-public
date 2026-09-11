@@ -54,6 +54,7 @@ export const { auth, handlers } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          mustChangePassword: user.mustChangePassword,
         };
       },
     }),
@@ -68,17 +69,32 @@ export const { auth, handlers } = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.mustChangePassword = user.mustChangePassword;
+      } else if (token.role === "RESEARCHER" && typeof token.id === "string") {
+        // Password changes and admin resets must take effect for existing JWTs.
+        // Read the database instead of trusting a client-provided session update.
+        const account = await prisma.user.findUnique({
+          where: { id: token.id },
+          select: { mustChangePassword: true },
+        });
+
+        if (!account) {
+          return null;
+        }
+
+        token.mustChangePassword = account.mustChangePassword;
       }
 
       return token;
     },
 
   async session({ session, token }) {
-      if (session.user) {
-      if (typeof token.id === "string") {
-      session.user.id = token.id;
-    }
-      if (
+if (session.user) {
+  if (typeof token.id === "string") {
+    session.user.id = token.id;
+  }
+
+  if (
     token.role === "SUPER_ADMIN" ||
     token.role === "ADMIN" ||
     token.role === "EDITOR" ||
@@ -86,10 +102,12 @@ export const { auth, handlers } = NextAuth({
   ) {
     session.user.role = token.role;
   }
-  }
+
+  session.user.mustChangePassword =
+    token.mustChangePassword === true;
+}
 
   return session;
   },
   },
 });
-
