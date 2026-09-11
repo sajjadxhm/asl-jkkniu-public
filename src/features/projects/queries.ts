@@ -1,20 +1,32 @@
 import { prisma } from "@/lib/db/prisma";
 import { requireProjectAccess } from "./permissions";
 
-const projectInclude = {
+const projectSummaryInclude = {
   principalInvestigator: { select: { id: true, name: true } },
-  members: { include: { person: { select: { id: true, name: true } } }, orderBy: { person: { name: "asc" as const } } },
   researchAreas: { include: { researchArea: { select: { id: true, name: true } } }, orderBy: { researchArea: { displayOrder: "asc" as const } } },
 };
 const projectOrder = [{ isFeatured: "desc" as const }, { updatedAt: "desc" as const }, { title: "asc" as const }];
 
 export async function getProjectsForManagement() {
   await requireProjectAccess();
-  return prisma.project.findMany({ include: projectInclude, orderBy: projectOrder });
+  return prisma.project.findMany({
+    select: {
+      id: true, title: true, status: true, isFeatured: true,
+      startDate: true, endDate: true,
+      principalInvestigator: { select: { name: true } },
+    },
+    orderBy: projectOrder,
+  });
 }
 export async function getProjectForManagement(id: string) {
   await requireProjectAccess();
-  return prisma.project.findUnique({ where: { id }, include: projectInclude });
+  return prisma.project.findUnique({
+    where: { id },
+    include: {
+      members: { select: { personId: true } },
+      researchAreas: { select: { researchAreaId: true } },
+    },
+  });
 }
 export async function getProjectFormOptions() {
   await requireProjectAccess();
@@ -25,11 +37,20 @@ export async function getProjectFormOptions() {
   return { people, researchAreas };
 }
 export async function getPublicProjects() {
-  return prisma.project.findMany({ include: projectInclude, orderBy: projectOrder });
+  return prisma.project.findMany({ include: projectSummaryInclude, orderBy: projectOrder });
 }
 export async function getFeaturedProjects() {
-  return prisma.project.findMany({ where: { isFeatured: true }, include: projectInclude, orderBy: projectOrder, take: 4 });
+  return prisma.project.findMany({ where: { isFeatured: true }, include: projectSummaryInclude, orderBy: projectOrder, take: 4 });
 }
 export async function getPublicProject(slug: string) {
-  return prisma.project.findUnique({ where: { slug }, include: projectInclude });
+  return prisma.project.findUnique({
+    where: { slug },
+    include: {
+      ...projectSummaryInclude,
+      members: {
+        include: { person: { select: { id: true, name: true } } },
+        orderBy: { person: { name: "asc" } },
+      },
+    },
+  });
 }

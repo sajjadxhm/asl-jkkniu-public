@@ -16,9 +16,10 @@ export function ProjectList({ projects, portal }: { projects: ProjectListItem[];
   const [status, setStatus] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
+  const normalizedSearch = search.trim().toLowerCase();
   const visible = projects.filter((project) =>
     (!status || status === project.status) &&
-    (project.title + " " + project.principalInvestigator.name).toLowerCase().includes(search.trim().toLowerCase()),
+    (project.title + " " + project.principalInvestigator.name).toLowerCase().includes(normalizedSearch),
   );
   async function remove(project: ProjectListItem) {
     if (!window.confirm(`Delete "${project.title}"? This permanently removes the project and its membership/research-area links.`)) return;
@@ -46,7 +47,7 @@ export function ProjectList({ projects, portal }: { projects: ProjectListItem[];
           </select>
         </label>
       </div>
-      <p className="text-sm text-muted-foreground">{visible.length} of {projects.length} projects</p>
+      <p role="status" className="text-sm text-muted-foreground">{visible.length} of {projects.length} projects</p>
       <div className="grid gap-4 xl:grid-cols-2">
         {visible.map((project) => (
           <article key={project.id} className="min-w-0 rounded-2xl border bg-background p-5 sm:p-6">
@@ -58,8 +59,8 @@ export function ProjectList({ projects, portal }: { projects: ProjectListItem[];
             <p className="mt-2 text-sm text-muted-foreground [overflow-wrap:anywhere]">PI: {project.principalInvestigator.name}</p>
             <p className="mt-2 text-sm text-muted-foreground">Start: {project.startDate ?? "Not set"} · End: {project.endDate ?? "Not set"}</p>
             <div className="mt-5 flex flex-wrap gap-4 border-t pt-4 text-sm font-medium">
-              <Link href={`/${portal}/projects/${project.id}/edit`} className="text-primary hover:underline">Edit</Link>
-              <button type="button" disabled={deletingId !== null} onClick={() => remove(project)} className="text-destructive hover:underline disabled:opacity-50">
+              <Link href={`/${portal}/projects/${project.id}/edit`} aria-label={`Edit ${project.title}`} className="text-primary hover:underline">Edit</Link>
+              <button type="button" aria-label={`Delete ${project.title}`} disabled={deletingId !== null} onClick={() => remove(project)} className="text-destructive hover:underline disabled:opacity-50">
                 {deletingId === project.id ? "Deleting..." : "Delete"}
               </button>
             </div>

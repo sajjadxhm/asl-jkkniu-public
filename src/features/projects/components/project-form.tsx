@@ -55,20 +55,20 @@ export function ProjectForm({ portal, people, researchAreas, project }: Props) {
       <fieldset disabled={isSubmitting} className="grid min-w-0 gap-6 sm:grid-cols-2">
         <div className="min-w-0 sm:col-span-2">
           <label htmlFor="title" className="mb-2 block text-sm font-medium">Title *</label>
-          <input id="title" className={inputClass} {...accessibility("title")} {...register("title", {
+          <input id="title" aria-required="true" className={inputClass} {...accessibility("title")} {...register("title", {
             onChange: (event) => { if (!project && !dirtyFields.slug) setValue("slug", projectSlug(event.target.value)); },
           })} />
           {fieldError("title")}
         </div>
         <div className="min-w-0">
           <label htmlFor="slug" className="mb-2 block text-sm font-medium">Slug *</label>
-          <input id="slug" className={inputClass} {...accessibility("slug")} {...register("slug")} />
+          <input id="slug" aria-required="true" className={inputClass} {...accessibility("slug")} {...register("slug")} />
           <p className="mt-1 text-xs text-muted-foreground">Used in /projects/your-slug. Changing it changes the public URL.</p>
           {fieldError("slug")}
         </div>
         <div className="min-w-0">
           <label htmlFor="status" className="mb-2 block text-sm font-medium">Status *</label>
-          <select id="status" className={inputClass} {...accessibility("status")} {...register("status")}>
+          <select id="status" aria-required="true" className={inputClass} {...accessibility("status")} {...register("status")}>
             {projectStatuses.map((status) => <option key={status} value={status}>{statusLabels[status]}</option>)}
           </select>
           {fieldError("status")}
@@ -87,7 +87,7 @@ export function ProjectForm({ portal, people, researchAreas, project }: Props) {
         ))}
         <div className="min-w-0 sm:col-span-2">
           <label htmlFor="principalInvestigatorId" className="mb-2 block text-sm font-medium">Principal Investigator *</label>
-          <select id="principalInvestigatorId" className={inputClass} {...accessibility("principalInvestigatorId")} {...register("principalInvestigatorId")}>
+          <select id="principalInvestigatorId" aria-required="true" className={inputClass} {...accessibility("principalInvestigatorId")} {...register("principalInvestigatorId")}>
             <option value="">Choose a Person</option>
             {people.map((person) => <option key={person.id} value={person.id}>{person.name}</option>)}
           </select>

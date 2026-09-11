@@ -17,20 +17,16 @@ export const siteNavigation: SiteNavigationItem[] = [
     href: "/research",
   },
   {
-    label: "People",
-    href: "/people",
+    label: "Projects",
+    href: "/projects",
   },
   {
     label: "Publications",
     href: "/publications",
   },
   {
-    label: "Projects",
-    href: "/projects",
-  },
-  {
-    label: "News",
-    href: "/news",
+    label: "People",
+    href: "/people",
   },
 ];
 
