@@ -116,12 +116,12 @@ const focusAreas = [
     description:
       "Connected sensing, intelligent hardware, embedded platforms, and edge systems.",
   },
-  {
-    number: "06",
-    title: "Industrial Automation",
-    description:
-      "Control systems, PLCs, machine automation, instrumentation, and manufacturing technologies.",
-  },
+{
+  number: "06",
+  title: "Human Activity Recognition",
+  description:
+    "Activity recognition, fall detection, and intelligent human-centered sensing.",
+},
 ];
 
 const ecosystem = [

@@ -64,12 +64,12 @@ const researchAreas = [
     description:
       "Precise positioning, RTK, sensor fusion, localization, and advanced navigation technologies.",
   },
-  {
-    number: "06",
-    title: "Industrial Automation",
-    description:
-      "Control systems, PLCs, instrumentation, machine automation, and manufacturing technologies.",
-  },
+{
+  number: "06",
+  title: "Human Activity Recognition",
+  description:
+    "Activity recognition, fall detection, and intelligent human-centered sensing.",
+},
 ];
 
 const researchFlow = [
