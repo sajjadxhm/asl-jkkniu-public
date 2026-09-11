@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
-import { BookOpen, ChevronRight, LayoutDashboard, LogOut, Menu, UsersRound, X } from "lucide-react";
+import { BookOpen, ChevronRight, FolderKanban, LayoutDashboard, LogOut, Menu, UsersRound, X } from "lucide-react";
 import { AslLogo } from "./asl-logo";
 import type { UserRole } from "@/lib/permissions/auth";
 
@@ -26,6 +26,7 @@ export function AdminPortalShell({ children, userName, userRole }: AdminPortalSh
       ? [{ label: "Researcher Accounts", href: "/admin/researchers", icon: UsersRound }]
       : [{ label: "People", href: "/admin/people", icon: UsersRound }]),
     { label: "Publications", href: "/admin/publications", icon: BookOpen },
+    ...(userRole === "SUPER_ADMIN" ? [{ label: "ASL Projects", href: "/admin/projects", icon: FolderKanban }] : []),
   ];
 
   useEffect(() => {
