@@ -1,159 +1,53 @@
 import Link from "next/link";
+import { ArrowRight, BookOpen, UserPlus, UsersRound } from "lucide-react";
+import { prisma } from "@/lib/db/prisma";
+import { requireRole } from "@/lib/permissions/auth";
 
-const dashboardItems = [
-  {
-    title: "People",
-    description:
-      "Manage directory profiles and public visibility, including alumni and co-researchers.",
-    href: "/admin/people",
-  },
-  {
-    title: "Publications",
-    description:
-      "Manage journal articles, conference papers, books, theses, and other publications.",
-    href: "/admin/publications",
-  },
-  {
-    title: "Projects",
-    description:
-      "Manage ongoing, completed, planned, and archived research projects.",
-    href: "/admin/projects",
-  },
-  {
-    title: "News",
-    description:
-      "Manage lab announcements, events, achievements, and research news.",
-    href: "/admin/news",
-  },
-];
+export default async function AdminDashboardPage() {
+  const user = await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
+  const isSuperAdmin = user.role === "SUPER_ADMIN";
+  const [publications, accounts, activeAccounts] = await Promise.all([
+    prisma.publication.count(),
+    isSuperAdmin ? prisma.user.count({ where: { role: "RESEARCHER" } }) : Promise.resolve(0),
+    isSuperAdmin ? prisma.user.count({ where: { role: "RESEARCHER", isActive: true } }) : Promise.resolve(0),
+  ]);
+  const cards = [
+    ...(isSuperAdmin ? [{ title: "Researcher Accounts", value: accounts, detail: `${activeAccounts} login-enabled accounts`, href: "/admin/researchers", icon: UsersRound }] : []),
+    { title: "Publications", value: publications, detail: "Publications in the lab library", href: "/admin/publications", icon: BookOpen },
+  ];
+  const actions = [
+    ...(isSuperAdmin ? [{ title: "Create Researcher", description: "Set up a researcher profile and login account.", href: "/admin/researchers/new", icon: UserPlus }] : []),
+    { title: "Add Publication", description: "Add a research publication to the lab library.", href: "/admin/publications/new", icon: BookOpen },
+  ];
 
-export default function AdminDashboardPage() {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight">
-          Dashboard
-        </h2>
-
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Welcome to the ASL-JKKNIU administration dashboard.
-          Manage your lab website content from here.
-        </p>
+    <div>
+      <p className="text-sm font-medium text-primary">Administration overview</p>
+      <h1 className="mt-1 text-3xl font-semibold tracking-tight">Welcome back, {user.name ?? "Administrator"}</h1>
+      <p className="mt-2 text-muted-foreground">Manage the people behind the research and the work they publish.</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        {cards.map(({ title, value, detail, href, icon: Icon }) => (
+          <section key={href} className="rounded-2xl border bg-background p-6">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-sm text-muted-foreground">{title}</h2>
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><Icon className="size-4" /></div>
+            </div>
+            <p className="mt-4 text-3xl font-semibold">{value}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
+            <Link href={href} className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">Manage {title.toLowerCase()}<ArrowRight className="size-4" /></Link>
+          </section>
+        ))}
       </div>
-
-      {/* Overview */}
-      <section>
-        <div className="mb-4">
-          <h3 className="font-semibold">Content Management</h3>
-
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage the main content areas of the research lab website.
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {dashboardItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="group rounded-xl border bg-background p-5 transition-colors hover:bg-muted/50"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h4 className="font-semibold">
-                    {item.title}
-                  </h4>
-
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
-
-                <span className="text-muted-foreground transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </div>
+      <section className="mt-8">
+        <h2 className="text-lg font-semibold">Quick Actions</h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {actions.map(({ title, description, href, icon: Icon }) => (
+            <Link key={href} href={href} className="group rounded-2xl border bg-background p-6 transition-colors hover:bg-muted/50">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary"><Icon className="size-5" /></div>
+              <h3 className="mt-4 font-medium group-hover:text-primary">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
             </Link>
           ))}
-        </div>
-      </section>
-
-      {/* Quick Actions */}
-      <section className="rounded-xl border bg-background">
-        <div className="border-b px-5 py-4 sm:px-6">
-          <h3 className="font-semibold">Quick Actions</h3>
-
-          <p className="mt-1 text-sm text-muted-foreground">
-            Quickly access common content-management tasks.
-          </p>
-        </div>
-
-        <div className="grid gap-3 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
-          <Link
-            href="/admin/people/new"
-            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-          >
-            + Add Person
-          </Link>
-
-          <Link
-            href="/admin/publications/new"
-            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-          >
-            + Add Publication
-          </Link>
-
-          <Link
-            href="/admin/projects/new"
-            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-          >
-            + Add Project
-          </Link>
-
-          <Link
-            href="/admin/news/new"
-            className="rounded-lg border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-          >
-            + Add News
-          </Link>
-        </div>
-      </section>
-
-      {/* System Status */}
-      <section className="rounded-xl border bg-muted/20 p-5 sm:p-6">
-        <h3 className="font-semibold">System Status</h3>
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Database
-            </p>
-
-            <p className="mt-1 text-sm font-medium">
-              Connected
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Authentication
-            </p>
-
-            <p className="mt-1 text-sm font-medium">
-              Active
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Environment
-            </p>
-
-            <p className="mt-1 text-sm font-medium">
-              Development
-            </p>
-          </div>
         </div>
       </section>
     </div>

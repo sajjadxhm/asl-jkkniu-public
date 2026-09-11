@@ -32,7 +32,14 @@ export default async function AdminResearchersPage() {
         </Link>
       </div>
 
-      <section className="rounded-xl border bg-background">
+      <p className="text-sm text-muted-foreground">
+        For alumni, co-researchers, and public visibility,{" "}
+        <Link href="/admin/people" className="font-medium text-primary hover:underline">
+          manage directory profiles
+        </Link>.
+      </p>
+
+      <section className="rounded-2xl border bg-background">
         <div className="border-b px-5 py-4 sm:px-6">
           <h3 className="font-semibold">
             Researcher Accounts

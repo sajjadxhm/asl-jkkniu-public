@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Award,
   BookOpen,
   FolderKanban,
   ExternalLink,
@@ -23,8 +22,6 @@ export default async function ResearcherDashboardPage() {
 
   const projectCount =
     person?.projectMemberships.length ?? 0;
-
-  const awardCount = person?.awards.length ?? 0;
 
   const profileFields = [
     person?.name,
@@ -57,13 +54,13 @@ export default async function ResearcherDashboardPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       {/* Page heading */}
-      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-        <div>
+      <div className="flex flex-col justify-between gap-5 xl:flex-row xl:items-end">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-primary">
             Dashboard
           </p>
 
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight [overflow-wrap:anywhere]">
             Welcome back, {person?.name ?? user.name}
           </h1>
 
@@ -73,7 +70,7 @@ export default async function ResearcherDashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2">
           {person?.slug && (
             <Link
               href={`/people/${person.slug}`}
@@ -97,7 +94,7 @@ export default async function ResearcherDashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <DashboardStat
           label="Publications"
           value={publicationCount}
@@ -108,12 +105,6 @@ export default async function ResearcherDashboardPage() {
           label="Projects"
           value={projectCount}
           icon={FolderKanban}
-        />
-
-        <DashboardStat
-          label="Awards"
-          value={awardCount}
-          icon={Award}
         />
       </div>
 
@@ -131,7 +122,7 @@ export default async function ResearcherDashboardPage() {
             </p>
           </div>
 
-          <span className="text-2xl font-semibold">
+          <span className="shrink-0 text-2xl font-semibold">
             {profileCompleteness}%
           </span>
         </div>
@@ -159,7 +150,7 @@ export default async function ResearcherDashboardPage() {
           Quick Actions
         </h2>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <QuickAction
             href="/researcher/dashboard/profile"
             icon={UserRound}
@@ -208,7 +199,7 @@ function DashboardStat({
           {label}
         </p>
 
-        <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Icon className="size-4" />
         </div>
       </div>

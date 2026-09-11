@@ -29,7 +29,6 @@ export async function getResearcherByUserId(userId: string) {
               project: true,
             },
           },
-          awards: true,
         },
       },
     },

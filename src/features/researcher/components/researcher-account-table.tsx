@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import {
@@ -292,7 +293,15 @@ export function ResearcherAccountTable({
                   </td>
 
                   <td className="px-4 py-4">
-                    <div className="flex justify-end gap-3">
+                    <div className="flex flex-wrap justify-end gap-3">
+                      {researcher.person && (
+                        <Link
+                          href={`/admin/people/${researcher.person.id}/edit`}
+                          className="text-sm font-medium text-primary hover:underline"
+                        >
+                          Edit Profile
+                        </Link>
+                      )}
                       <button
                         type="button"
                         disabled={isLoading}
@@ -373,6 +382,14 @@ export function ResearcherAccountTable({
               </div>
 
               <div className="mt-4 flex flex-wrap gap-4 border-t pt-3">
+                {researcher.person && (
+                  <Link
+                    href={`/admin/people/${researcher.person.id}/edit`}
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    Edit Profile
+                  </Link>
+                )}
                 <button
                   type="button"
                   disabled={isLoading}

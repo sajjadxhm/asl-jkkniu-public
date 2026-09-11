@@ -97,7 +97,7 @@ export function ResearcherPortalShell({
     <div className="flex min-h-screen flex-col bg-muted/30">
 {/* Portal Header */}
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="flex h-[72px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex h-[72px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             {/* Mobile menu button */}
             <button
@@ -131,55 +131,35 @@ export function ResearcherPortalShell({
           </div>
 
 
-          {/* Portal identity */}
-          <div className="hidden items-center gap-3 sm:flex">
-            <div className="hidden text-right md:block">
-              <p className="text-sm font-medium">
-                Researcher Portal
-              </p>
-
-              <p className="text-xs text-muted-foreground">
+          {/* Keep the avatar inside the same header row at every breakpoint. */}
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="hidden min-w-0 text-right sm:block">
+              <p className="text-sm font-medium">Researcher Portal</p>
+              <p className="max-w-48 truncate text-xs text-muted-foreground" title={researcherName}>
                 {researcherName}
               </p>
             </div>
-
-            <div className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-semibold text-primary">
+            <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-semibold text-primary">
               {profileImage ? (
                 <Image
                   src={profileImage}
                   alt={`${researcherName}'s profile`}
                   width={40}
                   height={40}
-                  className="size-10 object-cover"
+                  className="aspect-square size-10 object-cover"
                 />
               ) : (
                 initials || "R"
               )}
             </div>
-
           </div>
-          </div>
-
-          {/* Mobile avatar */}
-        <div className="flex size-9 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-semibold text-primary sm:hidden">
-          {profileImage ? (
-            <Image
-              src={profileImage}
-              alt={`${researcherName}'s profile`}
-              width={36}
-              height={36}
-              className="size-9 object-cover"
-            />
-          ) : (
-            initials || "R"
-          )}
         </div>
       </header>
 
       <div className="flex flex-1">
         {/* Desktop Sidebar */}
         <aside className="hidden w-64 shrink-0 border-r bg-background lg:block">
-          <div className="sticky top-[72px] flex h-[calc(100vh-72px)] flex-col">
+          <div className="sticky top-[72px] flex h-[calc(100vh-72px)] flex-col overflow-y-auto">
             <nav
               className="flex-1 p-4"
               aria-label="Researcher portal navigation"
@@ -265,7 +245,7 @@ export function ResearcherPortalShell({
               onClick={closeMobileMenu}
             />
 
-            <aside className="relative h-full w-[280px] border-r bg-background shadow-xl">
+            <aside className="relative h-full w-[280px] max-w-[85vw] overflow-y-auto border-r bg-background shadow-xl">
               <nav
                 className="p-4"
                 aria-label="Mobile researcher portal navigation"
