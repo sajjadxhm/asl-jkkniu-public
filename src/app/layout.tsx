@@ -28,7 +28,8 @@ export const metadata: Metadata = {
   applicationName: "ASL-JKKNIU",
 
   icons: {
-    icon: "/icon.svg",
+    icon: { url: "https://i.ibb.co/0yZwFBXB/icon.png", type: "image/png" },
+    apple: { url: "https://i.ibb.co/0yZwFBXB/icon.png", type: "image/png" },
   },
 
   openGraph: {

@@ -164,7 +164,7 @@ export default function HomePage() {
           <div className="absolute left-[48%] top-0 hidden h-full w-px bg-border/40 lg:block" />
         </div>
 
-        <div className="relative mx-auto grid min-h-[calc(100vh-73px)] max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 sm:py-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:px-8 lg:py-12 xl:py-23">
           <div className="relative z-10 max-w-4xl">
             {/* Identity */}
             <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <h1 className="mt-7 max-w-4xl text-5xl font-semibold tracking-[-0.045em] sm:text-6xl lg:text-7xl xl:text-[5.3rem] xl:leading-[0.98]">
+            <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-[-0.045em] sm:text-5xl lg:text-6xl xl:text-[4rem]">
               Researching
               <span className="block text-[#0067FF]">
                 intelligent systems
@@ -185,13 +185,13 @@ export default function HomePage() {
               for a smarter future.
             </h1>
 
-            <p className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+            <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
               ASL-JKKNIU brings together engineering, intelligent
               technologies, experimentation, and research to explore
               challenging problems and build systems that matter.
             </p>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/publications"
                 className="inline-flex items-center justify-center rounded-md bg-[#0067FF] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0058dc]"
@@ -209,7 +209,7 @@ export default function HomePage() {
             </div>
 
             {/* Small identity strip */}
-            <div className="mt-14 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-4">
+            <div className="mt-8 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-4">
               {[
                 "Research",
                 "Experiment",
