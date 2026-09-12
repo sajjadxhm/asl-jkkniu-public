@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { deleteResearcherProfile } from "@/features/researcher/profile-delete-actions";
 import { useMemo, useState } from "react";
 
 import { deletePerson } from "@/features/people/actions";
@@ -13,6 +16,7 @@ designation: string | null;
 department: string | null;
 email: string | null;
 isActive: boolean;
+researcherProfile?: { id: string } | null;
 };
 
 type PeopleTableProps = {
@@ -22,6 +26,7 @@ people: PersonTableItem[];
 export function PeopleTable({
 people,
 }: PeopleTableProps) {
+const router = useRouter();
 const [search, setSearch] = useState("");
 const [status, setStatus] = useState<
 "all" | "active" | "inactive"
@@ -60,7 +65,9 @@ return people.filter((person) => {
 
 async function handleDelete(person: PersonTableItem) {
 const confirmed = window.confirm(
-`Are you sure you want to delete ${person.name}? This action cannot be undone.`,
+person.researcherProfile
+  ? `Permanently delete ${person.name} and their researcher profile? This also deletes any remaining researcher login, profile awards, project memberships and research-area links. Publications and projects stay, with publication author names preserved as text. This cannot be undone. If they lead a project, assign another lead first.`
+  : `Are you sure you want to delete ${person.name}? This action cannot be undone.`,
 );
 if (!confirmed) {
   return;
@@ -69,17 +76,20 @@ if (!confirmed) {
 setDeletingId(person.id);
 
 try {
-  const result = await deletePerson(person.id);
+  const result = person.researcherProfile
+    ? await deleteResearcherProfile(person.id)
+    : await deletePerson(person.id);
 
   if (!result.success) {
-    window.alert(result.message);
+    toast.error(result.message);
+    return;
   }
+  toast.success(result.message);
+  router.refresh();
 } catch (error) {
   console.error("Failed to delete person:", error);
 
-  window.alert(
-    "Something went wrong while deleting the person.",
-  );
+  toast.error("Something went wrong while deleting the person.");
 } finally {
   setDeletingId(null);
 }
@@ -243,7 +253,7 @@ Search people </label>
                 </td>
 
                 <td className="px-4 py-4 text-right">
-                  <div className="flex justify-end gap-3">
+                  <div className="flex flex-wrap justify-end gap-3">
                     <Link
                       href={`/admin/people/${person.id}/edit`}
                       className="text-sm font-medium text-primary hover:underline"
@@ -261,7 +271,7 @@ Search people </label>
                     >
                       {deletingId === person.id
                         ? "Deleting..."
-                        : "Delete"}
+                        : person.researcherProfile ? "Delete profile permanently" : "Delete"}
                     </button>
                   </div>
                 </td>
@@ -311,7 +321,7 @@ Search people </label>
               </p>
             </div>
 
-            <div className="mt-4 flex gap-4 border-t pt-3">
+            <div className="mt-4 flex flex-wrap gap-4 border-t pt-3">
               <Link
                 href={`/admin/people/${person.id}/edit`}
                 className="text-sm font-medium text-primary"
@@ -329,7 +339,7 @@ Search people </label>
               >
                 {deletingId === person.id
                   ? "Deleting..."
-                  : "Delete"}
+                  : person.researcherProfile ? "Delete profile permanently" : "Delete"}
               </button>
             </div>
           </div>

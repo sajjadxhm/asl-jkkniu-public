@@ -37,6 +37,7 @@ export const personSchema = z.object({
     .or(z.literal("")),
 
   isActive: z.boolean(),
+  isPublic: z.boolean().optional(),
 });
 
 export type PersonInput = z.infer<typeof personSchema>;

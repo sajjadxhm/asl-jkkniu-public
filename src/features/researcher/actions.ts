@@ -158,6 +158,7 @@ export async function updateResearcherProfile(
     },
     select: {
       personId: true,
+      person: { select: { slug: true } },
     },
   });
 
@@ -225,6 +226,11 @@ export async function updateResearcherProfile(
   revalidatePath("/researcher/dashboard");
   revalidatePath("/researcher/dashboard/profile");
   revalidatePath("/people");
+  if (currentUser.person) revalidatePath(`/people/${currentUser.person.slug}`);
+  revalidatePath("/join-us");
+  revalidatePath("/contact");
+  revalidatePath("/admin/people");
+  revalidatePath(`/admin/people/${currentUser.personId}/edit`);
 
   return {
     success: true,

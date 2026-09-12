@@ -96,6 +96,8 @@ id,
 },
 select: {
 id: true,
+slug: true,
+researcherProfile: { select: { id: true } },
 },
 });
 
@@ -113,6 +115,7 @@ designation,
 department,
 bio,
 isActive,
+isPublic,
 } = result.data;
 
 const updatedPerson = await prisma.person.update({
@@ -126,11 +129,19 @@ designation: designation || null,
 department: department || null,
 bio: bio || null,
 isActive,
+...(existingPerson.researcherProfile && typeof isPublic === "boolean"
+  ? { researcherProfile: { update: { isPublic } } }
+  : {}),
 },
 });
 
 revalidatePath("/admin/people");
-revalidatePath("/people", "layout");
+revalidatePath("/people");
+revalidatePath(`/people/${existingPerson.slug}`);
+revalidatePath("/join-us");
+revalidatePath("/contact");
+revalidatePath("/researcher/dashboard");
+revalidatePath("/researcher/dashboard/profile");
 revalidatePath(`/admin/people/${id}/edit`);
 
 return {
@@ -173,7 +184,7 @@ export async function deletePerson(id: string) {
     return {
       success: false,
       message:
-        "Researcher profiles cannot be deleted from People. Manage the researcher account from the Researchers section.",
+        "Use the Super Admin Delete profile permanently action in People to remove a researcher profile.",
     };
   }
 

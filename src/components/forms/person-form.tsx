@@ -24,6 +24,7 @@ designation: string | null;
 department: string | null;
 bio: string | null;
 isActive: boolean;
+researcherProfile?: { isPublic: boolean } | null;
 };
 };
 
@@ -43,6 +44,7 @@ null,
 
 const {
 register,
+watch,
 handleSubmit,
 formState: { errors, isSubmitting },
 } = useForm<PersonInput>({
@@ -54,6 +56,7 @@ designation: person?.designation ?? "",
 department: person?.department ?? "",
 bio: person?.bio ?? "",
 isActive: person?.isActive ?? true,
+isPublic: person?.researcherProfile?.isPublic,
 },
 });
 
@@ -234,26 +237,45 @@ Full Name <span className="ml-1 text-destructive">*</span> </label>
     </div>
   </div>
 
-  <div className="rounded-lg border bg-muted/20 p-4">
-    <label className="flex cursor-pointer items-start gap-3">
+  {person?.researcherProfile && (
+    <div className="rounded-lg border bg-muted/20 p-4">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input type="checkbox" {...register("isPublic")} disabled={isSubmitting} className="mt-0.5 size-4 shrink-0 rounded border" />
+        <span>
+          <span className="block text-sm font-medium">Show on public People page</span>
+          <span className="mt-1 block text-xs text-muted-foreground">Use this setting to show or hide this researcher on the public directory and profile page. Hiding a profile keeps all records and login access unchanged.</span>
+        </span>
+      </label>
+      {!watch("isActive") && (
+        <p role="status" className="mt-3 text-sm text-amber-700 dark:text-amber-400">
+          This Person record is inactive, so the profile stays hidden even when this box is checked. Enable the record under Advanced record status to make it eligible for public display.
+        </p>
+      )}
+    </div>
+  )}
+
+  <details className="rounded-lg border p-4" open={person?.researcherProfile ? undefined : true}>
+    <summary className="cursor-pointer text-sm font-medium">
+      {person?.researcherProfile ? "Advanced record status" : "Directory record status"}
+    </summary>
+    <label className="mt-4 flex cursor-pointer items-start gap-3">
       <input
         type="checkbox"
         {...register("isActive")}
         disabled={isSubmitting}
-        className="mt-0.5 size-4 rounded border"
+        className="mt-0.5 size-4 shrink-0 rounded border"
       />
-
       <span>
-        <span className="block text-sm font-medium">
-          Show on public People page
-        </span>
-
+        <span className="block text-sm font-medium">Keep this Person record active</span>
         <span className="mt-1 block text-xs text-muted-foreground">
-          When disabled, this person will be hidden from the public People page but will remain available in Admin management.
+          {person?.researcherProfile
+            ? 'Normally leave this enabled. An inactive record is excluded from public pages regardless of its visibility setting. To simply hide this researcher, use "Show on public People page" above.'
+            : "Active records can appear in the public People directory. Disable this to hide the person while keeping their record in Admin management."}
+          {" "}This does not enable or disable a login account.
         </span>
       </span>
     </label>
-  </div>
+  </details>
 
   {serverMessage && (
     <p

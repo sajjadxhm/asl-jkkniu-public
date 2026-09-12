@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { deleteResearcherAccount } from "@/features/researcher/account-actions";
 
 import {
   resetResearcherPassword,
@@ -44,6 +46,37 @@ export function ResearcherAccountTable({
       email: string;
       password: string;
     } | null>(null);
+
+  async function handleDeleteAccount(researcher: ResearcherAccount) {
+    if (loadingId !== null) return;
+    if (!window.confirm(
+      `Permanently delete the login account for ${researcher.name} (${researcher.email})? This cannot be undone. Their Person, profile, publications, projects and other academic records will remain. This does not hide their public profile.`,
+    )) return;
+    setLoadingId(researcher.id);
+    try {
+      const result = await deleteResearcherAccount(researcher.id);
+      if (!result.success) {
+        toast.error(result.message);
+        return;
+      }
+      setTemporaryPassword(null);
+      toast.success(result.message);
+      router.refresh();
+    } catch {
+      toast.error("Unable to delete the account. Please try again.");
+    } finally {
+      setLoadingId(null);
+    }
+  }
+
+  function deleteButton(researcher: ResearcherAccount) {
+    return (
+      <button type="button" disabled={loadingId !== null} onClick={() => handleDeleteAccount(researcher)}
+        className="text-sm font-medium text-destructive hover:underline disabled:cursor-not-allowed disabled:opacity-50">
+        Delete login only
+      </button>
+    );
+  }
 
   async function handleStatusChange(
     researcher: ResearcherAccount,
@@ -327,6 +360,7 @@ export function ResearcherAccountTable({
                       >
                         Reset Password
                       </button>
+                      {deleteButton(researcher)}
                     </div>
                   </td>
                 </tr>
@@ -415,6 +449,7 @@ export function ResearcherAccountTable({
                 >
                   Reset Password
                 </button>
+                {deleteButton(researcher)}
               </div>
             </div>
           );

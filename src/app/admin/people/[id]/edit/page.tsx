@@ -56,6 +56,7 @@ return ( <div className="space-y-6"> <div> <Link
         department: person.department,
         bio: person.bio,
         isActive: person.isActive,
+        researcherProfile: person.researcherProfile,
       }}
     />
   </section>

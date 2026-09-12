@@ -606,13 +606,14 @@ export function ResearcherProfileForm({
         <div className="flex items-start gap-3">
           <input
             type="checkbox"
+            id="profile-is-public"
             {...register("isPublic")}
             className="mt-1 h-4 w-4"
           />
 
           <div>
-            <label className="text-sm font-medium">
-              Make my profile public
+            <label htmlFor="profile-is-public" className="text-sm font-medium">
+              Show on public People page
             </label>
 
             <p className="mt-1 text-sm text-muted-foreground">
