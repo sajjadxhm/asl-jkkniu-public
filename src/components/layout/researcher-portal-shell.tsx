@@ -83,11 +83,13 @@ export function ResearcherPortalShell({
     setMobileMenuOpen(false);
   }
 
-  async function handleSignOut() {
-    await signOut({
-      callbackUrl: "/login",
-    });
-  }
+async function handleSignOut() {
+  await signOut({
+    redirect: false,
+  });
+
+  window.location.href = "/login";
+}
 
   const publicProfileHref = profileSlug
     ? `/people/${profileSlug}`
@@ -119,18 +121,16 @@ export function ResearcherPortalShell({
                 <Menu className="size-5" />
               )}
             </button>
-
             <Link
-              href="/researcher/dashboard"
+              href="/"
               className="flex items-center"
-              aria-label="ASL-JKKNIU Researcher Portal"
+              aria-label="Go to ASL-JKKNIU website"
+              title="Go to ASL-JKKNIU website"
               onClick={closeMobileMenu}
             >
               <AslLogo className="h-auto w-32 sm:w-36 lg:w-40" />
             </Link>
-          </div>
-
-
+            </div>
           {/* Keep the avatar inside the same header row at every breakpoint. */}
           <div className="flex min-w-0 items-center gap-3">
             <div className="hidden min-w-0 text-right sm:block">

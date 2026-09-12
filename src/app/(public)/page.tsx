@@ -22,10 +22,10 @@ export const metadata: Metadata = {
  */
 
 const JKKNIU_LANDSCAPE_IMAGE =
-  "PASTE-JKKNIU-LANDSCAPE-IMAGE-LINK-HERE";
+  "https://i.ibb.co/wZzM5Fx3/Cover-ASL-JKKNIU-1.jpg";
 
 const ASL_LAB_IMAGE =
-  "PASTE-ASL-LAB-IMAGE-LINK-HERE";
+  "https://i.ibb.co/wZzM5Fx3/Cover-ASL-JKKNIU-1.jpg";
 
 const hasCampusImage = !JKKNIU_LANDSCAPE_IMAGE.startsWith(
   "PASTE-",

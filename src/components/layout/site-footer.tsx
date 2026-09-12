@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { AslLogo } from "./asl-logo";
+import { FooterAslLogo } from "./footer-asl-logo";
 import { researcherPortalNavigation } from "./site-navigation";
 
 type FooterLink = {
@@ -122,10 +122,10 @@ export function SiteFooter() {
           <div className="max-w-md">
             <Link
               href="/"
-              className="inline-flex rounded-xl bg-white p-3 transition-opacity hover:opacity-90"
+              className="inline-flex transition-opacity hover:opacity-85"
               aria-label="ASL-JKKNIU home"
             >
-              <AslLogo className="h-auto w-40 sm:w-44" />
+              <FooterAslLogo className="h-auto w-40 sm:w-44" />
             </Link>
 
             <p className="mt-6 max-w-sm text-sm leading-6 text-white/55">
