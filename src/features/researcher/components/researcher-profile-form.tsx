@@ -80,10 +80,10 @@ export function ResearcherProfileForm({
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 1024 * 1024;
 
     if (file.size > maxSize) {
-      toast.error("Profile photo must be smaller than 5 MB.");
+      toast.error("Profile photo must be 1 MB or smaller.");
       event.target.value = "";
       return;
     }
@@ -216,7 +216,7 @@ export function ResearcherProfileForm({
             </p>
 
             <p className="mt-2 text-xs text-muted-foreground">
-              JPG, PNG, or WebP · Maximum 5 MB
+              JPG, PNG, or WebP · Maximum 1 MB
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">

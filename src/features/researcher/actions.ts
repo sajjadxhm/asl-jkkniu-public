@@ -311,12 +311,12 @@ export async function uploadResearcherProfileImage(
     };
   }
 
-  const maxSize = 5 * 1024 * 1024;
+  const maxSize = 1024 * 1024;
 
   if (file.size > maxSize) {
     return {
       success: false,
-      error: "Profile photo must be smaller than 5 MB.",
+      error: "Profile photo must be 1 MB or smaller.",
     };
   }
 
