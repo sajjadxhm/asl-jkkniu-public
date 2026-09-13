@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { ProfileTextEditor } from "@/components/profile/profile-text-editor";
 import { toast } from "sonner";
 import Image from "next/image";
 
@@ -53,6 +54,7 @@ export function ResearcherProfileForm({
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<ResearcherProfileInput>({
@@ -375,16 +377,13 @@ export function ResearcherProfileForm({
           </div>
 
           <div className="md:col-span-2">
-            <label className="text-sm font-medium">
+            <label htmlFor="profile-education" className="text-sm font-medium">
               Education
             </label>
 
-            <textarea
-              {...register("education")}
-              rows={6}
-              placeholder="List your academic degrees and institutions..."
-              className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
-            />
+            <Controller name="education" control={control} render={({ field }) => (
+              <ProfileTextEditor id="profile-education" label="Education" value={field.value ?? ""} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} disabled={isSaving} maxLength={5000} />
+            )} />
           </div>
         </div>
       </section>
@@ -469,7 +468,7 @@ export function ResearcherProfileForm({
 
         <div className="space-y-6">
           <div>
-            <label className="text-sm font-medium">
+            <label htmlFor="profile-projects" className="text-sm font-medium">
               Research Projects
             </label>
 
@@ -478,24 +477,13 @@ export function ResearcherProfileForm({
               You can use one project per paragraph.
             </p>
 
-            <textarea
-              {...register("projects")}
-              rows={8}
-              placeholder={`Example:
-
-            Low-Cost GNSS RTK Network Development
-            Research Lead — 2025
-            Developed and field-validated a low-cost dual-frequency GNSS RTK network.
-
-            Smartphone-Based Human Activity Recognition
-            Researcher — 2024
-            Developed a smartphone-based visual-inertial human activity recognition system.`}
-              className="mt-3 w-full rounded-md border bg-background px-3 py-2 text-sm leading-6"
-            />
+            <Controller name="projects" control={control} render={({ field }) => (
+              <ProfileTextEditor id="profile-projects" label="Research Projects" value={field.value ?? ""} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} disabled={isSaving} maxLength={10000} />
+            )} />
           </div>
 
           <div>
-            <label className="text-sm font-medium">
+            <label htmlFor="profile-awards" className="text-sm font-medium">
               Awards & Achievements
             </label>
 
@@ -504,18 +492,9 @@ export function ResearcherProfileForm({
               professional awards.
             </p>
 
-            <textarea
-              {...register("awards")}
-              rows={7}
-              placeholder={`Example:
-
-              Session Best Paper Award — APMEE 2025
-              Awarded for the research paper presented at the 6th APMEE conference.
-
-              Research Excellence Award
-              Advanced System Lab — 2025`}
-              className="mt-3 w-full rounded-md border bg-background px-3 py-2 text-sm leading-6"
-            />
+            <Controller name="awards" control={control} render={({ field }) => (
+              <ProfileTextEditor id="profile-awards" label="Awards & Achievements" value={field.value ?? ""} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} disabled={isSaving} maxLength={10000} />
+            )} />
           </div>
         </div>
       </section>

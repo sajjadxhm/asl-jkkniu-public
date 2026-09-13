@@ -1,3 +1,4 @@
+import { FormattedProfileText } from "@/components/profile/formatted-profile-text";
 import { PublicationAuthor } from "@/features/publications/components/publication-author";
 import Image from "next/image";
 import Link from "next/link";
@@ -168,11 +169,11 @@ const academicLinks = [
       {/* =======================================================
           HERO
       ======================================================= */}
-      <section className="border-b border-[#002B56]/10 bg-[#F5FAF8]">
+      <section className="border-b border-[#002B56]/20 bg-[#F1F5F9]">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <Link
             href="/people"
-            className="text-sm font-medium text-[#002B56]/65 transition-colors hover:text-foreground"
+            className="text-sm font-medium text-[#475569] transition-colors hover:text-foreground"
           >
             ← Back to People
           </Link>
@@ -180,7 +181,7 @@ const academicLinks = [
           <div className="mt-7 grid gap-6 sm:grid-cols-[176px_minmax(0,1fr)] sm:items-center lg:grid-cols-[208px_minmax(0,1fr)] lg:gap-8">
             {/* Profile image */}
             <div className="flex justify-start">
-              <div className="relative aspect-square w-36 shrink-0 overflow-hidden rounded-xl border border-[#002B56]/10 bg-white sm:w-44 lg:w-52">
+              <div className="relative aspect-square w-36 shrink-0 overflow-hidden rounded-xl border border-[#002B56]/20 bg-white sm:w-44 lg:w-52">
                 {person.profileImage ? (
                   <Image
                     src={person.profileImage}
@@ -211,12 +212,12 @@ const academicLinks = [
               </h1>
 
               {person.designation && (
-                <p className="mt-4 text-lg text-[#002B56]/65">
+                <p className="mt-4 text-lg text-[#475569]">
                   {person.designation}
                 </p>
               )}
 
-              <div className="mt-5 space-y-1 text-sm text-[#002B56]/65">
+              <div className="mt-5 space-y-1 text-sm text-[#475569]">
                 {person.department && (
                   <p>{person.department}</p>
                 )}
@@ -247,7 +248,7 @@ const academicLinks = [
                     rel="noopener noreferrer"
                     aria-label={label}
                     title={label}
-                    className="mr-2 mt-4 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#002B56]/15 bg-white text-[#002B56]/65 transition-all hover:border-[#0067FF] hover:bg-[#E1FFE1]/50 hover:text-[#0067FF]"
+                    className="mr-2 mt-4 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#002B56]/15 bg-white text-[#475569] transition-all hover:border-[#0067FF] hover:bg-[#E1FFE1]/50 hover:text-[#0067FF]"
                   >
                     <Icon className="h-4 w-4" />
                   </a>
@@ -264,13 +265,13 @@ const academicLinks = [
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12">
           {/* Main column */}
-          <div className="min-w-0 space-y-9">
+          <div className="min-w-0 space-y-12">
             {/* About */}
             {person.bio && (
               <section>
                 <SectionHeading title="About" />
 
-                <p className="mt-5 whitespace-pre-line text-base leading-8 text-[#002B56]/65">
+                <p className="mt-5 whitespace-pre-line text-base leading-8 text-[#475569]">
                   {person.bio}
                 </p>
               </section>
@@ -281,8 +282,8 @@ const academicLinks = [
               <section>
                 <SectionHeading title="Research Interests" />
 
-                <div className="mt-5 rounded-xl border border-[#002B56]/10 bg-[#F5FAF8] p-5 sm:p-6">
-                  <p className="whitespace-pre-line leading-8 text-[#002B56]/65">
+                <div className="mt-5 rounded-xl border border-[#002B56]/20 bg-[#F1F5F9] p-5 sm:p-6">
+                  <p className="whitespace-pre-line leading-8 text-[#475569]">
                     {profile.researchInterests}
                   </p>
                 </div>
@@ -294,10 +295,8 @@ const academicLinks = [
               <section>
                 <SectionHeading title="Education" />
 
-                <div className="mt-5 rounded-xl border border-[#002B56]/10 bg-white p-5 sm:p-6">
-                  <p className="whitespace-pre-line leading-8 text-[#002B56]/65">
-                    {profile.education}
-                  </p>
+                <div className="mt-5 rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6">
+                  <FormattedProfileText text={profile.education} />
                 </div>
               </section>
             )}
@@ -307,8 +306,8 @@ const academicLinks = [
               <section>
                 <SectionHeading title="Research Experience" />
 
-                <div className="mt-5 rounded-xl border border-[#002B56]/10 bg-white p-5 sm:p-6">
-                  <p className="whitespace-pre-line leading-8 text-[#002B56]/65">
+                <div className="mt-5 rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6">
+                  <p className="whitespace-pre-line leading-8 text-[#475569]">
                     {profile.experience}
                   </p>
                 </div>
@@ -332,7 +331,7 @@ const academicLinks = [
                     ({ publication }) => (
                       <article
                         key={publication.id}
-                        className="rounded-xl border border-[#002B56]/10 bg-white p-5 sm:p-6 transition-colors hover:bg-muted/20"
+                        className="rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6 transition-colors hover:bg-muted/20"
                       >
                         {/* Publication type */}
                         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -349,7 +348,7 @@ const academicLinks = [
                         </div>
 
                         {/* Authors */}
-                        <div className="mt-3 text-sm leading-6 text-[#002B56]/65">
+                        <div className="mt-3 text-sm leading-6 text-[#475569]">
                           {publication.authors.map(
                             (author, index) => (
                               <span
@@ -372,7 +371,7 @@ const academicLinks = [
                         </div>
 
                         {/* Publication metadata */}
-                        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-[#002B56]/65">
+                        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-[#475569]">
                           {publication.journal && (
                             <span>
                               {publication.journal}
@@ -453,7 +452,7 @@ const academicLinks = [
             {projects.length > 0 && (
               <section>
                 <SectionHeading
-                  title="Projects"
+                  title="Lab Projects"
                   count={projects.length}
                 />
 
@@ -461,7 +460,7 @@ const academicLinks = [
                   {projects.map((project) => (
                     <article
                       key={project.id}
-                      className="rounded-xl border border-[#002B56]/10 bg-white p-5 sm:p-6"
+                      className="rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6"
                     >
                       <div className="flex flex-col justify-between gap-3 sm:flex-row">
                         <div>
@@ -470,7 +469,7 @@ const academicLinks = [
                           </h3>
 
                           {project.description && (
-                            <p className="mt-2 leading-7 text-[#002B56]/65">
+                            <p className="mt-2 leading-7 text-[#475569]">
                               {project.description}
                             </p>
                           )}
@@ -484,7 +483,7 @@ const academicLinks = [
                         </span>
                       </div>
 
-                      <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#002B56]/65">
+                      <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#475569]">
                         {project.startDate && (
                           <span>
                             Started{" "}
@@ -518,38 +517,34 @@ const academicLinks = [
             )}
 
             {person.researcherProfile?.projects?.trim() && (
-              <section className="border-t pt-10">
+              <section className="border-t border-[#002B56]/20 pt-8">
                 <div className="mb-5">
-                  <h2 className="text-xl font-semibold tracking-tight">
+                  <h2 className="text-2xl font-semibold tracking-tight">
                     Projects
                   </h2>
 
-                  <p className="mt-1 text-sm text-[#002B56]/65">
+                  <p className="mt-1 text-sm text-[#475569]">
                     Selected research and technical projects.
                   </p>
                 </div>
 
-                <div className="whitespace-pre-line text-sm leading-7 text-[#002B56]/65">
-                  {person.researcherProfile.projects}
-                </div>
+                <div className="rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6"><FormattedProfileText text={person.researcherProfile.projects} /></div>
               </section>
             )}
 
             {person.researcherProfile?.awards?.trim() && (
-              <section className="border-t pt-10">
+              <section className="border-t border-[#002B56]/20 pt-8">
                 <div className="mb-5">
-                  <h2 className="text-xl font-semibold tracking-tight">
+                  <h2 className="text-2xl font-semibold tracking-tight">
                     Awards & Achievements
                   </h2>
 
-                  <p className="mt-1 text-sm text-[#002B56]/65">
+                  <p className="mt-1 text-sm text-[#475569]">
                     Selected academic, research, and professional achievements.
                   </p>
                 </div>
 
-                <div className="whitespace-pre-line text-sm leading-7 text-[#002B56]/65">
-                  {person.researcherProfile.awards}
-                </div>
+                <div className="rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6"><FormattedProfileText text={person.researcherProfile.awards} /></div>
               </section>
             )}
 
@@ -567,7 +562,7 @@ const academicLinks = [
                   {person.awards.map((award) => (
                     <article
                       key={award.id}
-                      className="rounded-xl border border-[#002B56]/10 bg-white p-5 sm:p-6"
+                      className="rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6"
                     >
                       <h3 className="font-semibold">
                         {award.title}
@@ -580,13 +575,13 @@ const academicLinks = [
                       )}
 
                       {award.description && (
-                        <p className="mt-3 whitespace-pre-line leading-7 text-[#002B56]/65">
+                        <p className="mt-3 whitespace-pre-line leading-7 text-[#475569]">
                           {award.description}
                         </p>
                       )}
 
                       {award.awardDate && (
-                        <p className="mt-4 text-sm text-[#002B56]/65">
+                        <p className="mt-4 text-sm text-[#475569]">
                           {formatDate(award.awardDate)}
                         </p>
                       )}
@@ -613,8 +608,8 @@ const academicLinks = [
               <section>
                 <SectionHeading title="Skills & Expertise" />
 
-                <div className="mt-5 rounded-xl border border-[#002B56]/10 bg-[#F5FAF8] p-5 sm:p-6">
-                  <p className="whitespace-pre-line leading-8 text-[#002B56]/65">
+                <div className="mt-5 rounded-xl border border-[#002B56]/20 bg-[#F1F5F9] p-5 sm:p-6">
+                  <p className="whitespace-pre-line leading-8 text-[#475569]">
                     {profile.skills}
                   </p>
                 </div>
@@ -629,7 +624,7 @@ const academicLinks = [
             {/* Research Areas */}
             {person.researchAreas.length > 0 && (
               <section>
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#002B56]/65">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#475569]">
                   Research Areas
                 </h2>
 
@@ -650,14 +645,14 @@ const academicLinks = [
 
             {/* Contact */}
             {(person.email || profile.phone) && (
-              <section className="rounded-xl border border-[#002B56]/10 bg-white p-5 sm:p-6">
+              <section className="rounded-xl border border-[#002B56]/20 bg-white p-5 sm:p-6">
                 <h2 className="font-semibold">Contact</h2>
 
                 <div className="mt-4 space-y-3 text-sm">
                   {person.email && (
                     <a
                       href={`mailto:${person.email}`}
-                      className="flex items-start gap-3 text-[#002B56]/65 hover:text-[#0067FF]"
+                      className="flex items-start gap-3 text-[#475569] hover:text-[#0067FF]"
                     >
                       <Mail className="mt-0.5 h-4 w-4 shrink-0" />
                       <span className="break-all">
@@ -669,7 +664,7 @@ const academicLinks = [
                   {profile.phone && (
                     <a
                       href={`tel:${profile.phone}`}
-                      className="flex items-center gap-3 text-[#002B56]/65 hover:text-[#0067FF]"
+                      className="flex items-center gap-3 text-[#475569] hover:text-[#0067FF]"
                     >
                       <Phone className="h-4 w-4 shrink-0" />
                       <span>{profile.phone}</span>
@@ -681,7 +676,7 @@ const academicLinks = [
 
             {/* Academic & Professional Links */}
             {academicLinks.length > 0 && (
-              <div className="rounded-xl border border-[#002B56]/10 bg-[#F5FAF8] p-5">
+              <div className="rounded-xl border border-[#002B56]/20 bg-[#F1F5F9] p-5">
                 <h2 className="text-lg font-semibold">
                   Academic & Professional Links
                 </h2>
@@ -700,7 +695,7 @@ const academicLinks = [
                         rel="noopener noreferrer"
                         className="group flex items-center gap-3 rounded-lg border bg-background px-3 py-2.5 transition-colors hover:bg-muted"
                       >
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-[#002B56]/65">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-[#475569]">
                           <Icon className="h-4 w-4" />
                         </span>
 
@@ -708,7 +703,7 @@ const academicLinks = [
                           {label}
                         </span>
 
-                        <ExternalLinkIcon className="h-4 w-4 shrink-0 text-[#002B56]/65 transition-transform group-hover:translate-x-0.5" />
+                        <ExternalLinkIcon className="h-4 w-4 shrink-0 text-[#475569] transition-transform group-hover:translate-x-0.5" />
                       </a>
                     );
                   })}
@@ -730,13 +725,13 @@ function SectionHeading({
   count?: number;
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-[#002B56]/15 pb-3">
+    <div className="flex items-baseline justify-between gap-4 border-b-2 border-[#002B56]/20 pb-3">
       <h2 className="text-2xl font-semibold tracking-tight">
         {title}
       </h2>
 
       {typeof count === "number" && (
-        <span className="text-sm text-[#002B56]/65">
+        <span className="text-sm text-[#475569]">
           {count}
         </span>
       )}
