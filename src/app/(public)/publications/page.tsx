@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PublicationAuthor } from "@/features/publications/components/publication-author";
 import { ArrowLeft, ArrowRight, ExternalLink, Star } from "lucide-react";
 import { PublicPageHeader } from "@/components/layout/public-page-header";
 import { getFeaturedPublications, getLatestPublications } from "@/features/publications/queries";
@@ -40,7 +41,7 @@ function PublicationEntry({ publication, featured = false }: { publication: Publ
         <p className="mt-2 text-sm leading-6 text-[#002B56]/75 [overflow-wrap:anywhere]">
           {publication.authors.map((author, index) => <span key={author.person?.id ?? `external-${index}`}>
             {index > 0 && ", "}
-            {author.person ? <Link href={`/people/${author.person.slug}`} className="underline-offset-4 hover:text-[#0067FF] hover:underline">{author.person.name}</Link> : author.externalName}
+            <PublicationAuthor author={author} className="underline-offset-4 hover:text-[#0067FF] hover:underline" />
           </span>)}
         </p>
         {(venue.length > 0 || date) && <p className="mt-2 text-xs leading-5 text-[#002B56]/70 [overflow-wrap:anywhere]">

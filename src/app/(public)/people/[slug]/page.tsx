@@ -1,3 +1,4 @@
+import { PublicationAuthor } from "@/features/publications/components/publication-author";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -359,20 +360,12 @@ const academicLinks = [
                               >
                                 {index > 0 && ", "}
 
-                                {author.person ? (
-                                  <Link
-                                    href={`/people/${author.person.slug}`}
-                                    className={
-                                      author.person.id === person.id
-                                        ? "font-medium text-foreground"
-                                        : "hover:text-[#0067FF]"
-                                    }
-                                  >
-                                    {author.person.name}
-                                  </Link>
-                                ) : (
-                                  <span>{author.externalName}</span>
-                                )}
+                                <PublicationAuthor
+                                  author={author}
+                                  className={author.person?.id === person.id
+                                    ? "font-medium text-foreground"
+                                    : "hover:text-[#0067FF]"}
+                                />
                               </span>
                             ),
                           )}
