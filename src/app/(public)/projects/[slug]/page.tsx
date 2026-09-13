@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PublicPageHeader } from "@/components/layout/public-page-header";
@@ -5,6 +6,15 @@ import { getPublicProject } from "@/features/projects/queries";
 import { statusLabels } from "@/features/projects/validations";
 
 export const dynamic = "force-dynamic";
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const project = await getPublicProject(slug);
+  if (!project) return { title: "Project Not Found", robots: { index: false, follow: false } };
+  return publicMetadata(`/projects/${encodeURIComponent(project.slug)}`, {
+    title: project.title,
+    description: project.description?.replace(/\s+/g, " ").slice(0, 160) || `Research project at Advanced System Lab led by ${project.principalInvestigator.name}.`,
+  });
+}
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getPublicProject(slug);

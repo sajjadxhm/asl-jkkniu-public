@@ -1,3 +1,4 @@
+import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -16,15 +17,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://asljkkniu.org"),
+  metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "ASL-JKKNIU — Advanced System Lab",
+    default: SITE_TITLE,
     template: "%s | ASL-JKKNIU",
   },
 
-  description:
-    "Advanced System Lab (ASL-JKKNIU) at Jatiya Kabi Kazi Nazrul Islam University — research in intelligent systems, robotics, computer vision, AI, navigation, IoT, and industrial automation.",
+  description: SITE_DESCRIPTION,
 
   applicationName: "ASL-JKKNIU",
 
@@ -34,12 +34,12 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "ASL-JKKNIU — Advanced System Lab",
-    description:
-      "Research in intelligent systems, robotics, computer vision, AI, navigation, and emerging technologies.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     type: "website",
     siteName: "ASL-JKKNIU",
   },
+  twitter: { card: "summary", title: SITE_TITLE, description: SITE_DESCRIPTION },
 };
 
 export default function RootLayout({

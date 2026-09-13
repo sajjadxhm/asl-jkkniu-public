@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { PublicationAuthor } from "@/features/publications/components/publication-author";
 import { ArrowLeft, ArrowRight, ExternalLink, Star } from "lucide-react";
@@ -5,10 +6,15 @@ import { PublicPageHeader } from "@/components/layout/public-page-header";
 import { getFeaturedPublications, getLatestPublications } from "@/features/publications/queries";
 
 export const dynamic = "force-dynamic";
-export const metadata = {
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  const params = await searchParams;
+  const parsed = Number.parseInt(params.page ?? "1", 10);
+  const page = Number.isFinite(parsed) && parsed > 1 ? parsed : 1;
+  return publicMetadata(page > 1 ? `/publications?page=${page}` : "/publications", {
   title: "Publications",
   description: "Research publications and scientific outputs from ASL-JKKNIU.",
-};
+});
+}
 type Publication = Awaited<ReturnType<typeof getLatestPublications>>["publications"][number];
 function PublicationLinks({ publication }: { publication: Publication }) {
   const links = [

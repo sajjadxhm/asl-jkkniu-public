@@ -1,3 +1,5 @@
+export const metadata = { robots: { index: false, follow: false } };
+
 import { requireRole } from "@/lib/permissions/auth";
 import { AdminPortalShell } from "@/components/layout/admin-portal-shell";
 

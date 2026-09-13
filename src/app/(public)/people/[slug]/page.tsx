@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/seo";
 import { FormattedProfileText } from "@/components/profile/formatted-profile-text";
 import { PublicationAuthor } from "@/features/publications/components/publication-author";
 import Image from "next/image";
@@ -68,6 +69,7 @@ export async function generateMetadata({
   if (!person) {
     return {
       title: "Researcher Not Found",
+      robots: { index: false, follow: false },
     };
   }
 
@@ -79,7 +81,7 @@ export async function generateMetadata({
     person.bio ??
     `${person.name} — ${position} at Advanced System Lab, JKKNIU.`;
 
-  return {
+  return publicMetadata(`/people/${encodeURIComponent(person.slug)}`, {
     title: person.name,
     description,
     openGraph: {
@@ -89,7 +91,7 @@ export async function generateMetadata({
         ? [person.profileImage]
         : undefined,
     },
-  };
+  });
 }
 
 export default async function ResearcherPublicProfile({

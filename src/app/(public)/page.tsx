@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
+import { publicMetadata, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Advanced System Lab — JKKNIU",
-  description:
-    "Advanced System Lab at Jatiya Kabi Kazi Nazrul Islam University conducts research across robotics, artificial intelligence, computer vision, navigation, embedded systems, and industrial automation.",
-};
+export const metadata = publicMetadata("/", { title: { absolute: SITE_TITLE }, description: SITE_DESCRIPTION });
 
 /**
  * ============================================================

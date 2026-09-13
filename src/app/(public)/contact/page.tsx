@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -10,11 +10,11 @@ import {
 import { PersonImage } from "@/components/people/person-image";
 import { getPeople } from "@/features/people/queries";
 
-export const metadata: Metadata = {
+export const metadata = publicMetadata("/contact", {
   title: "Contact",
   description:
     "Contact Advanced System Lab (ASL-JKKNIU), including the Principal Investigator and the lab website/development contact.",
-};
+});
 
 type Person = Awaited<ReturnType<typeof getPeople>>[number];
 

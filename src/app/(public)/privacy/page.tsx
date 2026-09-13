@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -10,11 +10,11 @@ import {
   UserRound,
 } from "lucide-react";
 
-export const metadata: Metadata = {
+export const metadata = publicMetadata("/privacy", {
   title: "Privacy",
   description:
     "Privacy information for the Advanced System Lab (ASL-JKKNIU) website.",
-};
+});
 
 const privacySections = [
   {

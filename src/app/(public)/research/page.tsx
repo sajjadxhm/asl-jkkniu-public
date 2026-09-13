@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 
-export const metadata: Metadata = {
+export const metadata = publicMetadata("/research", {
   title: "Research",
   description:
     "Explore the research areas of Advanced System Lab (ASL-JKKNIU), including robotics, artificial intelligence, computer vision, GNSS, embedded systems, and human activity recognition.",
-};
+});
 
 const researchAreas = [
   {

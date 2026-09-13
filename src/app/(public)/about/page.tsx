@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 
-export const metadata: Metadata = {
+export const metadata = publicMetadata("/about", {
   title: "About",
   description:
     "Learn about Advanced System Lab (ASL-JKKNIU), our mission, vision, research philosophy, and approach to engineering intelligent systems.",
-};
+});
 
 /**
  * ============================================================

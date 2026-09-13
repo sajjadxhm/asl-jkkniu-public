@@ -1,13 +1,14 @@
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { PersonImage } from "@/components/people/person-image";
 import { PublicPageHeader } from "@/components/layout/public-page-header";
 import { getPeople } from "@/features/people/queries";
 
-export const metadata = {
+export const metadata = publicMetadata("/people", {
   title: "People",
   description: "Meet the researchers and members of Advanced System Lab, JKKNIU.",
-};
+});
 type Person = Awaited<ReturnType<typeof getPeople>>[number];
 const positions: Record<string, string> = {
   PRINCIPAL_INVESTIGATOR: "Principal Investigator",

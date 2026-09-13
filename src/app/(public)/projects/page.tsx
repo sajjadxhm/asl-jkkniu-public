@@ -1,3 +1,4 @@
+import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { PublicPageHeader } from "@/components/layout/public-page-header";
@@ -5,7 +6,7 @@ import { getPublicProjects } from "@/features/projects/queries";
 import { statusLabels } from "@/features/projects/validations";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "ASL Projects", description: "Explore research projects, collaborators, and ongoing work at Advanced System Lab." };
+export const metadata = publicMetadata("/projects", { title: "ASL Projects", description: "Explore research projects, collaborators, and ongoing work at Advanced System Lab." });
 export default async function ProjectsPage() {
   const projects = await getPublicProjects();
   return (
