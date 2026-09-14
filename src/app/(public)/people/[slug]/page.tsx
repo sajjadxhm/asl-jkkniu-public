@@ -37,7 +37,7 @@ function getPositionLabel(position: string) {
       return "Lead Researcher";
 
     default:
-      return "Researcher";
+      return "Research Assistant";
   }
 }
 
