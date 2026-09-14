@@ -1,4 +1,4 @@
-import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
+import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
   description: SITE_DESCRIPTION,
 
-  applicationName: "ASL-JKKNIU",
+  applicationName: SITE_NAME,
 
   icons: {
     icon: { url: "https://i.ibb.co/0yZwFBXB/icon.png", type: "image/png" },
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     type: "website",
-    siteName: "ASL-JKKNIU",
+    siteName: SITE_NAME,
   },
   twitter: { card: "summary", title: SITE_TITLE, description: SITE_DESCRIPTION },
 };

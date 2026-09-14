@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+export const SITE_NAME = "Advanced System Lab";
+export const SITE_ALTERNATE_NAME = "ASL-JKKNIU";
 export const SITE_URL = "https://www.asljkkniu.org";
 export const SITE_TITLE = "Advanced System Lab (ASL-JKKNIU) | Research Laboratory at JKKNIU";
 export const SITE_DESCRIPTION = "Advanced System Lab at Jatiya Kabi Kazi Nazrul Islam University researches robotics, artificial intelligence, computer vision, navigation, and embedded systems.";
@@ -12,7 +14,7 @@ export function publicMetadata(path: string, metadata: Metadata): Metadata {
   return {
     ...metadata,
     alternates: { canonical: url },
-    openGraph: { title, description, url, siteName: "ASL-JKKNIU", type: "website", ...metadata.openGraph },
+    openGraph: { title, description, url, siteName: SITE_NAME, type: "website", ...metadata.openGraph },
     twitter: { card: "summary", title, description, ...metadata.twitter },
   };
 }

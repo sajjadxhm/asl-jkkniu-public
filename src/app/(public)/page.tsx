@@ -1,4 +1,4 @@
-import { publicMetadata, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/seo";
+import { publicMetadata, SITE_TITLE, SITE_DESCRIPTION, SITE_NAME, SITE_ALTERNATE_NAME, SITE_URL } from "@/lib/seo";
 import Link from "next/link";
 
 export const metadata = publicMetadata("/", { title: { absolute: SITE_TITLE }, description: SITE_DESCRIPTION });
@@ -114,9 +114,36 @@ const ecosystem = [
   },
 ];
 
+const homepageUrl = new URL("/", SITE_URL).href;
+const siteStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": homepageUrl + "#website",
+      name: SITE_NAME,
+      alternateName: SITE_ALTERNATE_NAME,
+      url: homepageUrl,
+      publisher: { "@id": homepageUrl + "#organization" },
+    },
+    {
+      "@type": "Organization",
+      "@id": homepageUrl + "#organization",
+      name: SITE_NAME,
+      alternateName: SITE_ALTERNATE_NAME,
+      url: homepageUrl,
+      logo: new URL("/asl-logo.svg", SITE_URL).href,
+    },
+  ],
+};
+
 export default function HomePage() {
   return (
     <main className="overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteStructuredData).replace(/</g, "\\u003c") }}
+      />
       {/* =====================================================
           HERO
       ====================================================== */}
