@@ -28,7 +28,7 @@ export async function getPublications() {
   });
 }
 
-const publicPublicationInclude = {
+export const publicPublicationInclude = {
   authors: {
     orderBy: {
       authorOrder: "asc" as const,
