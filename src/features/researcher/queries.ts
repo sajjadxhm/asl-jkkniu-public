@@ -57,6 +57,7 @@ export async function getResearchersForAccountManagement() {
           id: true,
           slug: true,
           profileImage: true,
+          researcherProfile: { select: { position: true } },
           designation: true,
           department: true,
         },

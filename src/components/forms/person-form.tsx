@@ -1,5 +1,7 @@
 "use client";
 
+import { RESEARCHER_POSITION_OPTIONS, type ResearcherPosition } from "@/lib/researcher-position";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -24,7 +26,7 @@ designation: string | null;
 department: string | null;
 bio: string | null;
 isActive: boolean;
-researcherProfile?: { isPublic: boolean } | null;
+researcherProfile?: { isPublic: boolean; position: ResearcherPosition } | null;
 };
 };
 
@@ -57,6 +59,7 @@ department: person?.department ?? "",
 bio: person?.bio ?? "",
 isActive: person?.isActive ?? true,
 isPublic: person?.researcherProfile?.isPublic,
+position: person?.researcherProfile?.position,
 },
 });
 
@@ -179,6 +182,16 @@ Full Name <span className="ml-1 text-destructive">*</span> </label>
         </p>
       )}
     </div>
+
+    {person?.researcherProfile && (
+      <div className="space-y-2 sm:col-span-2">
+        <label htmlFor="position" className="text-sm font-medium">ASL Position</label>
+        <select id="position" {...register("position")} disabled={isSubmitting} className="w-full rounded-md border bg-background px-3 py-2.5 text-sm focus:ring-2 focus:ring-ring/20">
+          {RESEARCHER_POSITION_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
+        </select>
+        {errors.position && <p className="text-sm text-destructive">{errors.position.message}</p>}
+      </div>
+    )}
 
     <div className="space-y-2 sm:col-span-2">
       <label

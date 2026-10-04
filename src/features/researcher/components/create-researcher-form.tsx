@@ -1,5 +1,7 @@
 "use client";
 
+import { RESEARCHER_POSITION_OPTIONS as positions } from "@/lib/researcher-position";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -12,24 +14,6 @@ import {
   type CreateResearcherInput,
 } from "../validations";
 
-const positions = [
-  {
-    value: "RESEARCHER",
-    label: "Research Assistant",
-  },
-  {
-    value: "LEAD_RESEARCHER",
-    label: "Lead Researcher",
-  },
-  {
-    value: "ASSOCIATE_RESEARCH_LEAD",
-    label: "Associate Research Lead",
-  },
-  {
-    value: "PRINCIPAL_INVESTIGATOR",
-    label: "Principal Investigator",
-  },
-] as const;
 
 export function CreateResearcherForm() {
   const router = useRouter();

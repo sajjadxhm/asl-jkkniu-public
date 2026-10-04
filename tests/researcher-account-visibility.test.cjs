@@ -52,7 +52,8 @@ test("only researcher Users can be deleted; no academic model is accessed", asyn
   assert.equal(JSON.stringify(action.mutations), JSON.stringify([{ where: { id: "target", role: "RESEARCHER" } }]));
   assert.deepEqual(action.routes, ["/admin/researchers", "/admin"]);
 });
-const validation = load("src/lib/validations/people.ts", { zod: require("zod") });
+const positions = load("src/lib/researcher-position.ts", {});
+const validation = load("src/lib/validations/people.ts", { zod: require("zod"), "@/lib/researcher-position": positions });
 test("visibility update preserves independent Person status and never writes User", async () => {
   for (const hasProfile of [true, false]) {
     for (const isPublic of [true, false]) {
@@ -87,4 +88,42 @@ test("public directory excludes private profiles without requiring a login; mana
   assert.equal(where.OR[1].researcherProfile.isPublic, true);
   assert.equal(where.user, undefined);
   assert.equal(queries[1].where, undefined);
+});
+
+
+test("all six positions retain labels, hierarchy, and validation compatibility", () => {
+  const expected = ["PRINCIPAL_INVESTIGATOR", "ASSOCIATE_RESEARCH_LEAD", "LEAD_RESEARCHER", "SENIOR_RESEARCHER", "RESEARCHER", "RESEARCH_INTERN"];
+  assert.deepEqual(Array.from(positions.RESEARCHER_POSITIONS), expected);
+  assert.equal(positions.getResearcherPositionLabel("RESEARCHER"), "Research Assistant");
+  assert.equal(positions.getResearcherPositionLabel("SENIOR_RESEARCHER"), "Senior Researcher");
+  assert.equal(positions.getResearcherPositionLabel("RESEARCH_INTERN"), "Research Intern");
+  const schemas = load("src/features/researcher/validations.ts", { zod: require("zod"), "@/lib/researcher-position": positions });
+  for (const schema of [schemas.createResearcherSchema, schemas.researcherProfileSchema, validation.personSchema]) {
+    for (const position of expected) assert.equal(schema.shape.position.safeParse(position).success, true);
+    for (const role of ["SUPER_ADMIN", "ADMIN", "EDITOR"]) assert.equal(schema.shape.position.safeParse(role).success, false);
+  }
+});
+
+test("Admin position updates affect existing profiles only and preserve visibility", async () => {
+  for (const hasProfile of [true, false]) {
+    for (const position of positions.RESEARCHER_POSITIONS) {
+      let written;
+      const actions = load("src/features/people/actions.ts", {
+        "@/lib/permissions/auth": { async requireRole() {} },
+        "@/lib/validations/people": validation,
+        "next/cache": { revalidatePath() {} },
+        "@/lib/db/prisma": { prisma: { person: {
+          async findUnique() { return { id: "person", slug: "person", researcherProfile: hasProfile ? { id: "profile" } : null }; },
+          async update(args) { written=args.data; return {id:"person"}; },
+        } } },
+      });
+      assert.equal((await actions.updatePerson("person", {name:"Example Person",isActive:true,position})).success,true);
+      assert.equal(written.isActive,true);
+      if (hasProfile) {
+        assert.equal(written.researcherProfile.update.position,position);
+        assert.equal(written.researcherProfile.update.isPublic,undefined);
+      } else assert.equal(written.researcherProfile,undefined);
+      assert.equal(written.user,undefined);
+    }
+  }
 });

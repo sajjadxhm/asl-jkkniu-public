@@ -116,6 +116,7 @@ department,
 bio,
 isActive,
 isPublic,
+position,
 } = result.data;
 
 const updatedPerson = await prisma.person.update({
@@ -129,8 +130,8 @@ designation: designation || null,
 department: department || null,
 bio: bio || null,
 isActive,
-...(existingPerson.researcherProfile && typeof isPublic === "boolean"
-  ? { researcherProfile: { update: { isPublic } } }
+...(existingPerson.researcherProfile && (typeof isPublic === "boolean" || position !== undefined)
+  ? { researcherProfile: { update: { ...(typeof isPublic === "boolean" ? { isPublic } : {}), ...(position !== undefined ? { position } : {}) } } }
   : {}),
 },
 });
@@ -143,6 +144,7 @@ revalidatePath("/contact");
 revalidatePath("/researcher/dashboard");
 revalidatePath("/researcher/dashboard/profile");
 revalidatePath(`/admin/people/${id}/edit`);
+revalidatePath("/admin/researchers");
 
 return {
 success: true,

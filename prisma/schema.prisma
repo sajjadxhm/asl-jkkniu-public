@@ -62,6 +62,8 @@ enum ResearcherPosition {
   LEAD_RESEARCHER
   ASSOCIATE_RESEARCH_LEAD
   PRINCIPAL_INVESTIGATOR
+  SENIOR_RESEARCHER
+  RESEARCH_INTERN
 }
 
 // ============================================================

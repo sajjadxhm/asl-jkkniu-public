@@ -1,5 +1,7 @@
 "use client";
 
+import { RESEARCHER_POSITION_OPTIONS as positions } from "@/lib/researcher-position";
+
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ProfileTextEditor } from "@/components/profile/profile-text-editor";
@@ -22,24 +24,6 @@ type ResearcherProfileFormProps = {
   };
 };
 
-const positions = [
-  {
-    value: "RESEARCHER",
-    label: "Research Assistant",
-  },
-  {
-    value: "LEAD_RESEARCHER",
-    label: "Lead Researcher",
-  },
-  {
-    value: "ASSOCIATE_RESEARCH_LEAD",
-    label: "Associate Research Lead",
-  },
-  {
-    value: "PRINCIPAL_INVESTIGATOR",
-    label: "Principal Investigator",
-  },
-] as const;
 
 export function ResearcherProfileForm({
   initialData,

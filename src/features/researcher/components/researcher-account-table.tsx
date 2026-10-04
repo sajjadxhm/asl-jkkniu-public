@@ -1,5 +1,7 @@
 "use client";
 
+import { getResearcherPositionLabel, type ResearcherPosition } from "@/lib/researcher-position";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,6 +24,7 @@ type ResearcherAccount = {
     id: string;
     slug: string;
     profileImage: string | null;
+    researcherProfile: { position: ResearcherPosition } | null;
     designation: string | null;
     department: string | null;
   } | null;
@@ -295,8 +298,7 @@ export function ResearcherAccountTable({
                   </td>
 
                   <td className="px-4 py-4 text-muted-foreground">
-                    {researcher.person?.designation ||
-                      "Research Assistant"}
+                    {getResearcherPositionLabel(researcher.person?.researcherProfile?.position) ?? "No researcher profile"}
                   </td>
 
                   <td className="px-4 py-4 text-muted-foreground">
@@ -387,8 +389,7 @@ export function ResearcherAccountTable({
                   </p>
 
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {researcher.person?.designation ||
-                      "Research Assistant"}
+                    {getResearcherPositionLabel(researcher.person?.researcherProfile?.position) ?? "No researcher profile"}
                   </p>
                 </div>
 

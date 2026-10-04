@@ -126,6 +126,8 @@ export async function createResearcher(input: unknown) {
   });
 
   revalidatePath("/admin/people");
+  revalidatePath("/admin/researchers");
+  revalidatePath("/people", "layout");
   revalidatePath("/researcher/dashboard");
 
   return {
@@ -231,6 +233,7 @@ export async function updateResearcherProfile(
   revalidatePath("/contact");
   revalidatePath("/admin/people");
   revalidatePath(`/admin/people/${currentUser.personId}/edit`);
+  revalidatePath("/admin/researchers");
 
   return {
     success: true,

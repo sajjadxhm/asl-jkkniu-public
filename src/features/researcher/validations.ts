@@ -1,3 +1,4 @@
+import { RESEARCHER_POSITIONS } from "@/lib/researcher-position";
 import { z } from "zod";
 
 const flexibleUrl = z
@@ -30,12 +31,7 @@ export const researcherProfileSchema = z.object({
   designation: z.string().trim().max(150).optional(),
   department: z.string().trim().max(200).optional(),
 
-  position: z.enum([
-    "RESEARCHER",
-    "LEAD_RESEARCHER",
-    "ASSOCIATE_RESEARCH_LEAD",
-    "PRINCIPAL_INVESTIGATOR",
-  ]),
+  position: z.enum(RESEARCHER_POSITIONS),
 
   academicSession: z.string().trim().max(100).optional(),
   university: z.string().trim().max(200).optional(),
@@ -94,12 +90,7 @@ export const createResearcherSchema = z.object({
 
   department: z.string().trim().max(200).optional(),
 
-  position: z.enum([
-    "RESEARCHER",
-    "LEAD_RESEARCHER",
-    "ASSOCIATE_RESEARCH_LEAD",
-    "PRINCIPAL_INVESTIGATOR",
-  ]),
+  position: z.enum(RESEARCHER_POSITIONS),
 
   academicSession: z.string().trim().max(100).optional(),
 

@@ -14,8 +14,7 @@ return ( <div className="space-y-6"> <div> <Link
     </h2>
 
     <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-      Add a new researcher, faculty member, student, or lab
-      member.
+      Add a Person-only directory record. To assign an ASL researcher position, use Create Researcher in Researcher Accounts.
     </p>
   </div>
 
@@ -31,6 +30,7 @@ return ( <div className="space-y-6"> <div> <Link
       </p>
     </div>
 
+    <Link href="/admin/researchers/new" className="mb-6 inline-block text-sm font-medium underline underline-offset-4">Create a researcher account and profile</Link>
     <PersonForm mode="create" />
   </section>
 </div>

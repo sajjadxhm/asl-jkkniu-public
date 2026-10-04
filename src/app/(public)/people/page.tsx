@@ -1,3 +1,4 @@
+import { RESEARCHER_POSITION_GROUPS, getResearcherPositionLabel } from "@/lib/researcher-position";
 import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
@@ -10,17 +11,11 @@ export const metadata = publicMetadata("/people", {
   description: "Meet the researchers and members of Advanced System Lab, JKKNIU.",
 });
 type Person = Awaited<ReturnType<typeof getPeople>>[number];
-const positions: Record<string, string> = {
-  PRINCIPAL_INVESTIGATOR: "Principal Investigator",
-  ASSOCIATE_RESEARCH_LEAD: "Associate Research Lead",
-  LEAD_RESEARCHER: "Lead Researcher",
-  RESEARCHER: "Research Assistant",
-};
 const cardClass = "group flex min-w-0 flex-col rounded-xl border border-[#002B56]/12 bg-white p-4 transition-colors hover:border-[#0067FF]/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0067FF]";
 
 function PersonCard({ person }: { person: Person }) {
   const isResearcher = Boolean(person.researcherProfile);
-  const position = isResearcher ? positions[person.researcherProfile!.position] : "Alumni / Co-researcher";
+  const position = isResearcher ? getResearcherPositionLabel(person.researcherProfile!.position) : "Alumni / Co-researcher";
   const content = (
     <>
       <div className="flex items-start gap-4">
@@ -56,10 +51,7 @@ function PersonCard({ person }: { person: Person }) {
 export default async function PeoplePage() {
   const people = await getPeople();
   const groups = [
-    { id: "principal-investigators", title: "Principal Investigator", position: "PRINCIPAL_INVESTIGATOR" },
-    { id: "associate-leads", title: "Associate Research Lead", position: "ASSOCIATE_RESEARCH_LEAD" },
-    { id: "lead-researchers", title: "Lead Researchers", position: "LEAD_RESEARCHER" },
-    { id: "research-assistants", title: "Research Assistants", position: "RESEARCHER" },
+    ...RESEARCHER_POSITION_GROUPS,
     { id: "alumni", title: "Alumni & Co-researchers", position: null },
   ].map((group) => ({
     ...group,

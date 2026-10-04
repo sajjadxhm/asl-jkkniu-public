@@ -72,7 +72,7 @@ export async function getPeopleForManagement() {
 }
 export async function getPersonById(id: string) {
   return prisma.person.findUnique({
-    include: { researcherProfile: { select: { isPublic: true } } },
+    include: { researcherProfile: { select: { isPublic: true, position: true } } },
     where: {
       id,
     },

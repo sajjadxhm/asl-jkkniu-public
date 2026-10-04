@@ -1,3 +1,4 @@
+import { RESEARCHER_POSITIONS } from "@/lib/researcher-position";
 import { z } from "zod";
 
 export const personSchema = z.object({
@@ -38,6 +39,7 @@ export const personSchema = z.object({
 
   isActive: z.boolean(),
   isPublic: z.boolean().optional(),
+  position: z.enum(RESEARCHER_POSITIONS).optional(),
 });
 
 export type PersonInput = z.infer<typeof personSchema>;

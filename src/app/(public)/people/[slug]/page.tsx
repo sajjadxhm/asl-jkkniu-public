@@ -1,3 +1,4 @@
+import { getResearcherPositionLabel } from "@/lib/researcher-position";
 import { publicMetadata } from "@/lib/seo";
 import { FormattedProfileText } from "@/components/profile/formatted-profile-text";
 import { PublicationAuthor } from "@/features/publications/components/publication-author";
@@ -25,21 +26,6 @@ interface ResearcherPageProps {
   }>;
 }
 
-function getPositionLabel(position: string) {
-  switch (position) {
-    case "PRINCIPAL_INVESTIGATOR":
-      return "Principal Investigator";
-
-    case "ASSOCIATE_RESEARCH_LEAD":
-      return "Associate Research Lead";
-
-    case "LEAD_RESEARCHER":
-      return "Lead Researcher";
-
-    default:
-      return "Research Assistant";
-  }
-}
 
 function formatDate(date: Date | null) {
   if (!date) return null;
@@ -73,7 +59,7 @@ export async function generateMetadata({
     };
   }
 
-  const position = getPositionLabel(
+  const position = getResearcherPositionLabel(
     person.researcherProfile?.position ?? "RESEARCHER",
   );
 
@@ -107,7 +93,7 @@ export default async function ResearcherPublicProfile({
 
   const profile = person.researcherProfile;
 
-  const position = getPositionLabel(profile.position);
+  const position = getResearcherPositionLabel(profile.position);
 
   /*
    * Projects can appear in two ways:

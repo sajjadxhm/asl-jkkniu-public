@@ -1,5 +1,7 @@
 "use client";
 
+import { getResearcherPositionLabel, type ResearcherPosition } from "@/lib/researcher-position";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -16,7 +18,7 @@ designation: string | null;
 department: string | null;
 email: string | null;
 isActive: boolean;
-researcherProfile?: { id: string } | null;
+researcherProfile?: { id: string; position: ResearcherPosition } | null;
 };
 
 type PeopleTableProps = {
@@ -44,6 +46,7 @@ return people.filter((person) => {
   const matchesSearch =
     normalizedSearch.length === 0 ||
     person.name.toLowerCase().includes(normalizedSearch) ||
+    getResearcherPositionLabel(person.researcherProfile?.position)?.toLowerCase().includes(normalizedSearch) ||
     person.designation
       ?.toLowerCase()
       .includes(normalizedSearch) ||
@@ -187,7 +190,7 @@ Search people </label>
               </th>
 
               <th className="px-4 py-3 text-left font-medium">
-                Designation
+                ASL Position / Designation
               </th>
 
               <th className="px-4 py-3 text-left font-medium">
@@ -294,6 +297,7 @@ Search people </label>
                 </p>
 
                 <p className="mt-1 text-sm text-muted-foreground">
+                  {person.researcherProfile && <span className="block font-medium text-foreground">{getResearcherPositionLabel(person.researcherProfile.position)}</span>}
                   {person.designation || "No designation"}
                 </p>
               </div>
