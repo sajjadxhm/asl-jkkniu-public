@@ -83,7 +83,7 @@ export async function getPublicResearcherBySlug(slug: string) {
   return prisma.person.findFirst({
     where: {
       slug,
-      isActive: true,
+      // Directory listing status does not control published profile access.
 
       researcherProfile: {
         isPublic: true,
@@ -225,5 +225,12 @@ export async function getAlumniAndCoResearchersForManagement() {
       profileImage: true,
       isActive: true,
     },
+  });
+}
+// Published profile URLs include former members who are no longer in the directory.
+export async function getPublicResearcherProfileUrls() {
+  return prisma.person.findMany({
+    where: { researcherProfile: { isPublic: true } },
+    select: { slug: true },
   });
 }

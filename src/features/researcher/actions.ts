@@ -233,6 +233,9 @@ export async function updateResearcherProfile(
   revalidatePath("/contact");
   revalidatePath("/admin/people");
   revalidatePath(`/admin/people/${currentUser.personId}/edit`);
+  revalidatePath("/publications");
+  revalidatePath("/people", "layout");
+  revalidatePath("/");
   revalidatePath("/admin/researchers");
 
   return {

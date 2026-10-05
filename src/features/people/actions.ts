@@ -145,6 +145,9 @@ revalidatePath("/researcher/dashboard");
 revalidatePath("/researcher/dashboard/profile");
 revalidatePath(`/admin/people/${id}/edit`);
 revalidatePath("/admin/researchers");
+revalidatePath("/publications");
+revalidatePath("/people", "layout");
+revalidatePath("/");
 
 return {
 success: true,

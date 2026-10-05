@@ -7,9 +7,9 @@ const ts = require("typescript");
 function load(file, mocks) {
   const module = { exports: {} };
   const source = ts.transpileModule(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, jsx: ts.JsxEmit.ReactJSX },
   }).outputText;
-  vm.runInNewContext(source, { module, exports: module.exports, console,
+  vm.runInNewContext(source, { module, exports: module.exports, console, URL,
     require(name) { if (name in mocks) return mocks[name]; throw Error("Unexpected dependency: " + name); },
   });
   return module.exports;
@@ -56,7 +56,7 @@ const positions = load("src/lib/researcher-position.ts", {});
 const validation = load("src/lib/validations/people.ts", { zod: require("zod"), "@/lib/researcher-position": positions });
 test("visibility update preserves independent Person status and never writes User", async () => {
   for (const hasProfile of [true, false]) {
-    for (const isPublic of [true, false]) {
+    for (const [isPublic, isActive] of [[true, true], [true, false], [false, true], [false, false]]) {
       const writes = [], routes = [];
       const actions = load("src/features/people/actions.ts", {
         "@/lib/permissions/auth": { async requireRole() {} },
@@ -67,8 +67,8 @@ test("visibility update preserves independent Person status and never writes Use
           async update(args) { writes.push(args.data); return { id: "person" }; },
         } } },
       });
-      assert.equal((await actions.updatePerson("person", { name: "Test Person", isActive: true, isPublic })).success, true);
-      assert.equal(writes[0].isActive, true);
+      assert.equal((await actions.updatePerson("person", { name: "Test Person", isActive, isPublic })).success, true);
+      assert.equal(writes[0].isActive, isActive);
       if (hasProfile) assert.equal(writes[0].researcherProfile.update.isPublic, isPublic);
       else assert.equal(writes[0].researcherProfile, undefined);
       for (const route of ["/people", "/people/person", "/join-us", "/contact"]) assert.ok(routes.includes(route));
@@ -125,5 +125,44 @@ test("Admin position updates affect existing profiles only and preserve visibili
       } else assert.equal(written.researcherProfile,undefined);
       assert.equal(written.user,undefined);
     }
+  }
+});
+
+
+test("published profile queries and sitemap do not depend on directory or login status", async () => {
+  const queries = [];
+  const methods = load("src/features/people/queries.ts", {
+    "@/lib/db/prisma": { prisma: { person: {
+      async findFirst(args) { queries.push(args); return null; },
+      async findMany(args) { queries.push(args); return []; },
+    } } },
+  });
+  await methods.getPublicResearcherBySlug("former-researcher");
+  await methods.getPublicResearcherProfileUrls();
+  for (const {where} of queries) {
+    assert.equal(where.researcherProfile.isPublic, true);
+    assert.equal(where.isActive, undefined);
+    assert.equal(where.user, undefined);
+  }
+  assert.equal(queries[0].where.slug, "former-researcher");
+});
+
+test("inactive published authors keep ASL links; unpublished authors use safe fallback", () => {
+  const {PublicationAuthor} = load("src/features/publications/components/publication-author.tsx", {
+    "next/link": { default: "internal-link" },
+    "react/jsx-runtime": require("react/jsx-runtime"),
+  });
+  for (const isActive of [true, false]) {
+    const person = { name: "Example", slug: "example", isActive, linkedinUrl: "https://www.linkedin.com/in/example", researcherProfile: {isPublic:true} };
+    const published = PublicationAuthor({author:{person,externalName:null}});
+    assert.equal(published.type,"internal-link");
+    assert.equal(published.props.href,"/people/example");
+    person.researcherProfile.isPublic=false;
+    const external = PublicationAuthor({author:{person,externalName:null}});
+    assert.equal(external.type,"a");
+    assert.equal(external.props.rel,"noopener noreferrer");
+    assert.equal(external.props.target,"_blank");
+    person.linkedinUrl=null;
+    assert.equal(PublicationAuthor({author:{person,externalName:null}}).type,"span");
   }
 });

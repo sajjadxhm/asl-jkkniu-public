@@ -576,12 +576,11 @@ export function ResearcherProfileForm({
 
           <div>
             <label htmlFor="profile-is-public" className="text-sm font-medium">
-              Show on public People page
+              Publish public researcher profile
             </label>
 
             <p className="mt-1 text-sm text-muted-foreground">
-              Your profile can appear on the ASL-JKKNIU People
-              directory and public researcher pages.
+              Publishing makes your profile URL accessible, even if Admin hides you from the People directory. Unpublishing removes public profile access and excludes you from the directory. Login access is unchanged.
             </p>
           </div>
         </div>

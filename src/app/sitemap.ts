@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getPeople } from "@/features/people/queries";
+import { getPublicResearcherProfileUrls } from "@/features/people/queries";
 import { getPublicProjects } from "@/features/projects/queries";
 import { SITE_URL, PUBLIC_PATHS } from "@/lib/seo";
 
@@ -7,10 +7,10 @@ import { SITE_URL, PUBLIC_PATHS } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [people, projects] = await Promise.all([getPeople(), getPublicProjects()]);
+  const [people, projects] = await Promise.all([getPublicResearcherProfileUrls(), getPublicProjects()]);
   return [
     ...PUBLIC_PATHS.map(path => ({ url: new URL(path, SITE_URL).href })),
-    ...people.filter(person => person.isActive && person.researcherProfile?.isPublic).map(person => ({
+    ...people.map(person => ({
       url: SITE_URL + "/people/" + encodeURIComponent(person.slug),
     })),
     ...projects.map(project => ({ url: SITE_URL + "/projects/" + encodeURIComponent(project.slug) })),

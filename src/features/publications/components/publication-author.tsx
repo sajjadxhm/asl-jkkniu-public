@@ -17,7 +17,7 @@ type PublicationAuthorProps = {
 export function PublicationAuthor({ author, className }: PublicationAuthorProps) {
   const person = author.person;
   const name = person?.name ?? author.externalName;
-  if (person?.isActive && person.researcherProfile?.isPublic) {
+  if (person?.researcherProfile?.isPublic) {
     return <Link href={`/people/${person.slug}`} className={className}>{name}</Link>;
   }
 
