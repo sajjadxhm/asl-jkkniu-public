@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { requireRole, requireResearcher } from "@/lib/permissions/auth";
 
 export async function getPeople() {
   return prisma.person.findMany({
@@ -25,8 +26,10 @@ export async function getPeople() {
       },
     ],
 
-    include: {
-      researcherProfile: true,
+    select: {
+      id: true, name: true, slug: true, designation: true, department: true,
+      profileImage: true, linkedinUrl: true, isActive: true,
+      researcherProfile: { select: { position: true } },
 
       researchAreas: {
         include: {
@@ -39,17 +42,13 @@ export async function getPeople() {
         },
       },
 
-      user: {
-        select: {
-          isActive: true,
-        },
-      },
     },
   });
 }
 
 // Management includes people regardless of public visibility.
 export async function getPeopleForManagement() {
+  await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
   return prisma.person.findMany({
     orderBy: [
       { displayOrder: "asc" },
@@ -71,6 +70,7 @@ export async function getPeopleForManagement() {
   });
 }
 export async function getPersonById(id: string) {
+  await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
   return prisma.person.findUnique({
     include: { researcherProfile: { select: { isPublic: true, position: true } } },
     where: {
@@ -203,6 +203,7 @@ export async function getAlumniAndCoResearchers() {
 }
 
 export async function getAlumniAndCoResearchersForManagement() {
+  await requireResearcher();
   return prisma.person.findMany({
     where: {
       researcherProfile: null,

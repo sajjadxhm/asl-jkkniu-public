@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db/prisma";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { createHash } from "node:crypto";
 
 import { loginSchema } from "@/lib/validations/auth";
 
@@ -55,6 +56,7 @@ export const { auth, handlers } = NextAuth({
           email: user.email,
           role: user.role,
           mustChangePassword: user.mustChangePassword,
+          passwordVersion: createHash("sha256").update(user.passwordHash).digest("hex"),
         };
       },
     }),
@@ -70,20 +72,24 @@ export const { auth, handlers } = NextAuth({
         token.id = user.id;
         token.role = user.role;
         token.mustChangePassword = user.mustChangePassword;
-      } else if (token.role === "RESEARCHER" && typeof token.id === "string") {
-        // Password changes and admin resets must take effect for existing JWTs.
-        // Read the database instead of trusting a client-provided session update.
+        token.passwordVersion = user.passwordVersion;
+      }
+      if (typeof token.id === "string") {
+        // Never accept client session-update claims. Password changes revoke old JWTs.
         const account = await prisma.user.findUnique({
           where: { id: token.id },
-          select: { mustChangePassword: true },
+          select: { name: true, email: true, role: true, isActive: true, passwordHash: true, mustChangePassword: true },
         });
 
-        if (!account) {
+        if (!account?.isActive || token.passwordVersion !== createHash("sha256").update(account.passwordHash).digest("hex")) {
           return null;
         }
 
+        token.role = account.role;
+        token.name = account.name;
+        token.email = account.email;
         token.mustChangePassword = account.mustChangePassword;
-      }
+      } else return null;
 
       return token;
     },

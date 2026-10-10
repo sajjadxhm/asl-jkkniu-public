@@ -75,7 +75,7 @@ export async function changeMyPassword(
 
   return {
     success: true,
-    message: "Password changed successfully.",
+    message: "Password changed successfully. Please sign in with your new password.",
   };
 }
 

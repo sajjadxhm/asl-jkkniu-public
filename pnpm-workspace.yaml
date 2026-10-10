@@ -1,3 +1,5 @@
+overrides:
+  'sharp@<0.35.5': 0.35.5
 allowBuilds:
   '@prisma/engines': true
   esbuild: true

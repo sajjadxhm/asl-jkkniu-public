@@ -10,6 +10,7 @@ interface Session {
 }
 
 interface User {
+  passwordVersion?: string;
   id: string;
   role: "SUPER_ADMIN" | "ADMIN" | "EDITOR" | "RESEARCHER";
   mustChangePassword: boolean;
@@ -18,6 +19,7 @@ interface User {
 
 declare module "next-auth/jwt" {
 interface JWT {
+  passwordVersion?: string;
   id: string;
   role: "SUPER_ADMIN" | "ADMIN" | "EDITOR" | "RESEARCHER";
   mustChangePassword: boolean;

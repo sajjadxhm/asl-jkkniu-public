@@ -79,12 +79,14 @@ export const createResearcherSchema = z.object({
   email: z
     .string()
     .trim()
-    .email("Please enter a valid email address."),
+    .email("Please enter a valid email address.")
+    .toLowerCase(),
 
   password: z
     .string()
     .min(8, "Password must be at least 8 characters.")
-    .max(100),
+    .max(100)
+    .refine((value) => new TextEncoder().encode(value).length <= 72, "Password must be 72 UTF-8 bytes or fewer."),
 
   designation: z.string().trim().max(150).optional(),
 

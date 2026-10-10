@@ -98,6 +98,7 @@ export async function updateAlumni(
     where: { id },
     select: {
       id: true,
+      user: { select: { id: true } },
       researcherProfile: {
         select: {
           id: true,
@@ -115,7 +116,7 @@ export async function updateAlumni(
 
   // Researchers must not accidentally modify a real researcher
   // through the Alumni / Co-researcher interface.
-  if (existingPerson.researcherProfile) {
+  if (existingPerson.researcherProfile || existingPerson.user) {
     return {
       success: false,
       message:
@@ -159,6 +160,7 @@ export async function deleteAlumni(id: string) {
     where: { id },
     select: {
       id: true,
+      user: { select: { id: true } },
       researcherProfile: {
         select: {
           id: true,
@@ -174,7 +176,7 @@ export async function deleteAlumni(id: string) {
     };
   }
 
-  if (existingPerson.researcherProfile) {
+  if (existingPerson.researcherProfile || existingPerson.user) {
     return {
       success: false,
       message:

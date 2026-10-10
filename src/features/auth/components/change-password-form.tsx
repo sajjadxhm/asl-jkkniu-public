@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 
 import { changeMyPassword } from "@/features/auth/password-actions";
 
 export function ChangePasswordForm() {
-  const router = useRouter();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -35,8 +34,7 @@ export function ChangePasswordForm() {
 
       toast.success(result.message);
 
-      router.push("/researcher/dashboard");
-      router.refresh();
+      await signOut({ callbackUrl: "/login" });
     } catch {
       toast.error(
         "Something went wrong. Please try again.",

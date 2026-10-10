@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 
 import { prisma } from "@/lib/db/prisma";
+import { httpUrl } from "@/lib/validations/url";
+import { matchesImageType } from "@/lib/validations/image";
 import {
   requireResearcher,
   requireRole,
@@ -248,7 +250,7 @@ export async function updateResearcherProfileImage(
 ) {
   const user = await requireResearcher();
 
-  if (profileImage !== null && profileImage.trim() === "") {
+  if (profileImage !== null && !httpUrl.safeParse(profileImage).success) {
     return {
       success: false,
       error: "Invalid profile image.",
@@ -319,7 +321,7 @@ export async function uploadResearcherProfileImage(
 
   const maxSize = 1024 * 1024;
 
-  if (file.size > maxSize) {
+  if (file.size === 0 || file.size > maxSize) {
     return {
       success: false,
       error: "Profile photo must be 1 MB or smaller.",
@@ -355,6 +357,9 @@ export async function uploadResearcherProfileImage(
   const filePath = `researchers/${personId}/profile.${extension}`;
 
   const fileBuffer = await file.arrayBuffer();
+  if (!matchesImageType(new Uint8Array(fileBuffer), file.type)) {
+    return { success: false, error: "Image contents do not match the selected file type." };
+  }
 
   const { error: uploadError } =
     await supabaseServer.storage

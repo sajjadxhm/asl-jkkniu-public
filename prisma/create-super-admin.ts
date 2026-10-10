@@ -52,6 +52,7 @@ async function main() {
       "Password must be at least 12 characters long.",
     );
   }
+  if (bcrypt.truncates(password)) throw new Error("Password must be 72 UTF-8 bytes or fewer.");
 
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -74,7 +75,8 @@ async function main() {
       passwordHash,
       role: "SUPER_ADMIN",
       isActive: true,
-      mustChangePassword: true,
+      // Supply a permanent private password; first-login change is researcher-only.
+      mustChangePassword: false,
     },
   });
 

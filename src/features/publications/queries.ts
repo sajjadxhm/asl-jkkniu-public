@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/db/prisma";
+import { requireRole } from "@/lib/permissions/auth";
 
 export async function getPublications() {
+  await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
   return prisma.publication.findMany({
     orderBy: [
       {
@@ -108,6 +110,7 @@ export async function getLatestPublications(
 
 
 export async function getPublicationById(id: string) {
+  await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
   return prisma.publication.findUnique({
     where: {
       id,
@@ -131,6 +134,7 @@ export async function getPublicationById(id: string) {
 }
 
 export async function getPublicationFormData() {
+  await requireRole(["SUPER_ADMIN", "ADMIN", "EDITOR"]);
   const [people, researchAreas] = await Promise.all([
     prisma.person.findMany({
       where: {

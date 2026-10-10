@@ -1,8 +1,16 @@
 import { prisma } from "@/lib/db/prisma";
+import { requireResearcher } from "@/lib/permissions/auth";
+
+async function requireOwnPerson(personId: string) {
+  const actor = await requireResearcher();
+  const account = await prisma.user.findUnique({ where: { id: actor.id }, select: { personId: true } });
+  return account?.personId === personId;
+}
 
 export async function getResearcherPublications(
   personId: string,
 ) {
+  if (!await requireOwnPerson(personId)) return [];
   return prisma.publication.findMany({
     where: {
       authors: {
@@ -55,6 +63,7 @@ export async function getResearcherPublicationById(
   id: string,
   personId: string,
 ) {
+  if (!await requireOwnPerson(personId)) return null;
   return prisma.publication.findFirst({
     where: {
       id,
@@ -97,6 +106,7 @@ export async function getResearcherPublicationById(
 }
 
 export async function getResearcherPublicationFormData() {
+  await requireResearcher();
   const [people, researchAreas] =
     await Promise.all([
       prisma.person.findMany({

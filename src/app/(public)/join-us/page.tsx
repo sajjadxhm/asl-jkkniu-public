@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "@/lib/validations/url";
 import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
 import {
@@ -167,7 +168,7 @@ function LeadershipCard({
 
               {person.linkedinUrl && (
                 <a
-                  href={person.linkedinUrl}
+                  href={safeHttpUrl(person.linkedinUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex flex-1 items-center justify-center rounded-md border border-[#002B56]/15 px-4 py-2.5 text-sm font-medium text-[#002B56] transition-colors hover:bg-[#E1FFE1]/40"

@@ -177,18 +177,6 @@ export function PublicationForm({
     setServerError(null);
     setServerMessage(null);
 
-    /*
-     * Debug information.
-     *
-     * This confirms which portal is submitting the form
-     * and what React Hook Form contains at submission time.
-     */
-    console.log("=== PUBLICATION SUBMISSION ===");
-    console.log("isFeatured:", values.isFeatured);
-    console.log("title:", values.title);
-    console.log("mode:", mode);
-    console.log("portal:", portal);
-
     try {
       /*
        * =====================================================

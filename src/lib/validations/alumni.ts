@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpUrl } from "./url";
 
 export const alumniSchema = z.object({
   name: z
@@ -7,17 +8,11 @@ export const alumniSchema = z.object({
     .min(2, "Name must be at least 2 characters.")
     .max(150, "Name must be 150 characters or fewer."),
 
-  linkedinUrl: z
-    .string()
-    .trim()
-    .url("Please enter a valid LinkedIn URL.")
+  linkedinUrl: httpUrl
     .optional()
     .or(z.literal("")),
 
-  profileImage: z
-    .string()
-    .trim()
-    .url("Please enter a valid image URL.")
+  profileImage: httpUrl
     .optional()
     .or(z.literal("")),
 

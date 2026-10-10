@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "@/lib/validations/url";
 import { ExternalLink, Star } from "lucide-react";
 import { PublicationAuthor } from "./publication-author";
 import type { getLatestPublications } from "../queries";
@@ -12,7 +13,7 @@ function PublicationLinks({ publication }: { publication: Publication }) {
   ].filter((link) => link.href);
   if (!links.length) return null;
   return <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
-    {links.map((link) => <a key={link.label} href={link.href!} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0067FF] underline-offset-4 hover:underline">
+    {links.map((link) => <a key={link.label} href={safeHttpUrl(link.href!)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0067FF] underline-offset-4 hover:underline">
       {link.label}<ExternalLink aria-hidden="true" className="size-3.5" />
     </a>)}
   </div>;

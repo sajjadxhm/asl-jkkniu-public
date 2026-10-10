@@ -78,6 +78,7 @@ test("visibility update preserves independent Person status and never writes Use
 test("public directory excludes private profiles without requiring a login; management stays unfiltered", async () => {
   const queries = [];
   const actions = load("src/features/people/queries.ts", {
+    "@/lib/permissions/auth": { async requireRole() {}, async requireResearcher() {} },
     "@/lib/db/prisma": { prisma: { person: { async findMany(args) { queries.push(args); return []; } } } },
   });
   await actions.getPeople();
@@ -132,6 +133,7 @@ test("Admin position updates affect existing profiles only and preserve visibili
 test("published profile queries and sitemap do not depend on directory or login status", async () => {
   const queries = [];
   const methods = load("src/features/people/queries.ts", {
+    "@/lib/permissions/auth": { async requireRole() {}, async requireResearcher() {} },
     "@/lib/db/prisma": { prisma: { person: {
       async findFirst(args) { queries.push(args); return null; },
       async findMany(args) { queries.push(args); return []; },

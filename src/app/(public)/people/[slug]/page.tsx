@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "@/lib/validations/url";
 import { getResearcherPositionLabel } from "@/lib/researcher-position";
 import { publicMetadata } from "@/lib/seo";
 import { FormattedProfileText } from "@/components/profile/formatted-profile-text";
@@ -231,7 +232,7 @@ const academicLinks = [
                 return (
                   <a
                     key={label}
-                    href={href}
+                    href={safeHttpUrl(href)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
@@ -406,7 +407,7 @@ const academicLinks = [
 
                             {publication.url && (
                               <a
-                                href={publication.url}
+                                href={safeHttpUrl(publication.url)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0067FF] hover:underline"
@@ -418,7 +419,7 @@ const academicLinks = [
 
                             {publication.pdfUrl && (
                               <a
-                                href={publication.pdfUrl}
+                                href={safeHttpUrl(publication.pdfUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0067FF] hover:underline"
@@ -489,7 +490,7 @@ const academicLinks = [
 
                       {project.projectUrl && (
                         <a
-                          href={project.projectUrl}
+                          href={safeHttpUrl(project.projectUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[#0067FF] hover:underline"
@@ -576,7 +577,7 @@ const academicLinks = [
 
                       {award.url && (
                         <a
-                          href={award.url}
+                          href={safeHttpUrl(award.url)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[#0067FF] hover:underline"
@@ -678,7 +679,7 @@ const academicLinks = [
                     return (
                       <a
                         key={label}
-                        href={href}
+                        href={safeHttpUrl(href)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex items-center gap-3 rounded-lg border bg-background px-3 py-2.5 transition-colors hover:bg-muted"

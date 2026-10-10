@@ -32,19 +32,16 @@ async function main() {
   if (password.length < 12) {
     throw new Error("ADMIN_PASSWORD must be at least 12 characters long.");
   }
+  if (bcrypt.truncates(password)) throw new Error("ADMIN_PASSWORD must be 72 UTF-8 bytes or fewer.");
+
+  if (await prisma.user.findUnique({ where: { email }, select: { id: true } })) {
+    throw new Error("Account already exists. Bootstrap does not reset passwords or promote accounts.");
+  }
 
   const passwordHash = await bcrypt.hash(password, 12);
 
-  const admin = await prisma.user.upsert({
-    where: {
-      email,
-    },
-    update: {
-      passwordHash,
-      role: "SUPER_ADMIN",
-      isActive: true,
-    },
-    create: {
+  const admin = await prisma.user.create({
+    data: {
     name: "System Administrator",
     email,
     passwordHash,

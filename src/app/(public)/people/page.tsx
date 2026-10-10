@@ -1,3 +1,4 @@
+import { safeHttpUrl } from "@/lib/validations/url";
 import { RESEARCHER_POSITION_GROUPS, getResearcherPositionLabel } from "@/lib/researcher-position";
 import { publicMetadata } from "@/lib/seo";
 import Link from "next/link";
@@ -44,7 +45,7 @@ function PersonCard({ person }: { person: Person }) {
     </>
   );
   if (isResearcher) return <Link href={`/people/${person.slug}`} className={cardClass}>{content}</Link>;
-  if (person.linkedinUrl) return <a href={person.linkedinUrl} target="_blank" rel="noopener noreferrer" className={cardClass}>{content}</a>;
+  if (person.linkedinUrl) return <a href={safeHttpUrl(person.linkedinUrl)} target="_blank" rel="noopener noreferrer" className={cardClass}>{content}</a>;
   return <article className={cardClass}>{content}</article>;
 }
 

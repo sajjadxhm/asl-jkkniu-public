@@ -9,7 +9,8 @@ export const changePasswordSchema = z
     newPassword: z
       .string()
       .min(8, "Password must be at least 8 characters.")
-      .max(100, "Password must be 100 characters or fewer."),
+      .max(100, "Password must be 100 characters or fewer.")
+      .refine((value) => new TextEncoder().encode(value).length <= 72, "Password must be 72 UTF-8 bytes or fewer."),
 
     confirmPassword: z
       .string()

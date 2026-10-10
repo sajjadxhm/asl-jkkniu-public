@@ -1,11 +1,15 @@
 import { prisma } from "@/lib/db/prisma";
+import { requireResearcherAccount, requireRole } from "@/lib/permissions/auth";
 
 export async function getResearcherByUserId(userId: string) {
+  const actor = await requireResearcherAccount();
+  if (actor.id !== userId) return null;
   return prisma.user.findUnique({
     where: {
       id: userId,
     },
-    include: {
+    select: {
+      id: true, name: true, email: true, personId: true,
       person: {
         include: {
           researcherProfile: true,
@@ -36,6 +40,7 @@ export async function getResearcherByUserId(userId: string) {
 }
 
 export async function getResearchersForAccountManagement() {
+  await requireRole(["SUPER_ADMIN"]);
   return prisma.user.findMany({
     where: {
       role: "RESEARCHER",

@@ -213,29 +213,6 @@ export async function createPublication(input: unknown) {
     });
 
     /*
-     * Verify the value actually stored by Prisma.
-     */
-    const verifiedPublication =
-      await prisma.publication.findUnique({
-        where: {
-          id: created.id,
-        },
-        select: {
-          id: true,
-          title: true,
-          isFeatured: true,
-        },
-      });
-
-    console.log("=== CREATE PUBLICATION VERIFICATION ===");
-    console.log("Submitted isFeatured:", data.isFeatured);
-    console.log(
-      "Database isFeatured:",
-      verifiedPublication?.isFeatured,
-    );
-    console.log("Publication ID:", created.id);
-
-    /*
      * Refresh affected pages.
      */
     revalidatePath("/admin/publications");
@@ -387,22 +364,6 @@ export async function updatePublication(
     );
 
     /*
-     * Server-side diagnostic.
-     */
-    console.log("=== UPDATE PUBLICATION ===");
-    console.log("Publication ID:", id);
-    console.log("Submitted isFeatured:", data.isFeatured);
-    console.log("Publication title:", data.title);
-    console.log(
-      "Submitted publicationDate:",
-      data.publicationDate,
-    );
-    console.log(
-      "Parsed publicationDate:",
-      publicationDate?.toISOString() ?? null,
-    );
-
-    /*
      * Update publication and relationships in one transaction.
      */
     await prisma.$transaction(async (tx) => {
@@ -493,16 +454,6 @@ export async function updatePublication(
         },
       });
 
-    console.log("=== UPDATE PUBLICATION VERIFICATION ===");
-    console.log("Submitted isFeatured:", data.isFeatured);
-    console.log(
-      "Database isFeatured:",
-      verifiedPublication?.isFeatured,
-    );
-    console.log(
-      "Expected isFeatured:",
-      data.isFeatured,
-    );
 
     /*
      * Detect an unexpected database result.

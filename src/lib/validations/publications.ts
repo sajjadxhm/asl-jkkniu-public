@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { httpUrl } from "./url";
 
 export const publicationSchema = z.object({
   title: z
@@ -57,17 +58,11 @@ export const publicationSchema = z.object({
     .optional()
     .or(z.literal("")),
 
-  url: z
-    .string()
-    .trim()
-    .url("Please enter a valid URL.")
+  url: httpUrl
     .optional()
     .or(z.literal("")),
 
-  pdfUrl: z
-    .string()
-    .trim()
-    .url("Please enter a valid PDF URL.")
+  pdfUrl: httpUrl
     .optional()
     .or(z.literal("")),
 
